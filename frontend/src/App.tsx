@@ -25,6 +25,7 @@ import {
   SAMPLE_CASES,
   calculateNadlerTBV
 } from "./types";
+import { analyzeUploadedSlideImage } from "./visionAnalyzer";
 
 export default function App() {
   const [activeTab, setActiveTab] = useState<"analyzer" | "transfusion" | "howToUse" | "benchmarks">("analyzer");
@@ -43,7 +44,7 @@ export default function App() {
   const [showExplanationCard, setShowExplanationCard] = useState<boolean>(true);
 
   const [selectedCaseId, setSelectedCaseId] = useState<string>("CASE-01");
-  const [, setUploadedImage] = useState<string | null>(null);
+  const [uploadedImage, setUploadedImage] = useState<string | null>(null);
   const [analyzing, setAnalyzing] = useState<boolean>(false);
   
   const [wellAState, setWellAState] = useState<number>(1);
@@ -77,24 +78,37 @@ export default function App() {
     if (file) {
       const reader = new FileReader();
       reader.onload = (event) => {
-        setUploadedImage(event.target?.result as string);
+        const dataUrl = event.target?.result as string;
+        setUploadedImage(dataUrl);
         setSelectedCaseId("CUSTOM");
-        runAutomatedVisionAnalysis();
+        runAutomatedVisionAnalysis(dataUrl);
       };
       reader.readAsDataURL(file);
     }
   };
 
-  const runAutomatedVisionAnalysis = () => {
+  const runAutomatedVisionAnalysis = (dataUrl: string) => {
     setAnalyzing(true);
-    setTimeout(() => {
-      setWellAState(1);
-      setWellBState(1);
-      setWellDState(0);
-      setWellScores({ a: 88.5, b: 84.2, d: 21.0 });
-      setAnalyzing(false);
-      triggerConfetti();
-    }, 1200);
+    const img = new Image();
+    img.src = dataUrl;
+    img.onload = async () => {
+      try {
+        const result = await analyzeUploadedSlideImage(img);
+        setWellAState(result.wellA.isClumped ? 1 : 0);
+        setWellBState(result.wellB.isClumped ? 1 : 0);
+        setWellDState(result.wellD.isClumped ? 1 : 0);
+        setWellScores({
+          a: result.wellA.score,
+          b: result.wellB.score,
+          d: result.wellD.score
+        });
+      } catch (err) {
+        console.error("Vision analysis failed", err);
+      } finally {
+        setAnalyzing(false);
+        triggerConfetti();
+      }
+    };
   };
 
   const triggerConfetti = () => {
@@ -256,12 +270,12 @@ export default function App() {
             patient={patient}
             setPatient={setPatient}
             nameError={nameError}
-            setNameError={setNameError}
             handleOpenReport={handleOpenReport}
             showExplanationCard={showExplanationCard}
             setShowExplanationCard={setShowExplanationCard}
             selectedCaseId={selectedCaseId}
             handleSelectCase={handleSelectCase}
+            uploadedImage={uploadedImage}
             fileInputRef={fileInputRef}
             handleFileUpload={handleFileUpload}
             analyzing={analyzing}
@@ -334,12 +348,12 @@ function AnalyzerTab({
   patient,
   setPatient,
   nameError,
-  setNameError,
   handleOpenReport,
   showExplanationCard,
   setShowExplanationCard,
   selectedCaseId,
   handleSelectCase,
+  uploadedImage,
   fileInputRef,
   handleFileUpload,
   analyzing,
@@ -447,7 +461,6 @@ function AnalyzerTab({
         </div>
       </div>
 
-      {/* NEW: BIOLOGICAL EXPLAINABILITY CARD (Kyu Aaya Yeh Blood Group?) */}
       <div
         style={{
           background: "linear-gradient(135deg, #ffffff 0%, #f8fafc 100%)",
@@ -483,7 +496,6 @@ function AnalyzerTab({
 
         {showExplanationCard && (
           <div style={{ padding: "20px", display: "flex", flexDirection: "column", gap: "16px" }}>
-            {/* Quick summary banner */}
             <div style={{ background: "#fef2f2", borderLeft: "4px solid #dc2626", padding: "12px 16px", borderRadius: "0 8px 8px 0" }}>
               <div style={{ fontWeight: 800, color: "#991b1b", fontSize: "0.88rem", marginBottom: "4px" }}>
                 🎯 Seedha Niyam (Clinical Identification Rule):
@@ -496,7 +508,6 @@ function AnalyzerTab({
               </p>
             </div>
 
-            {/* 3 Wells Breakdown in Plain Language */}
             <div>
               <h4 style={{ fontSize: "0.85rem", fontWeight: 800, color: "#334155", textTransform: "uppercase", marginBottom: "10px", display: "flex", alignItems: "center", gap: "6px" }}>
                 <FlaskConical size={14} color="#dc2626" /> Har Drop (Well) Ka Scientific Logic:
@@ -534,7 +545,6 @@ function AnalyzerTab({
               </div>
             </div>
 
-            {/* Antigens & Antibodies Bio Profile */}
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px", background: "#f8fafc", padding: "12px 16px", borderRadius: "8px", border: "1px solid #e2e8f0", fontSize: "0.82rem" }}>
               <div>
                 <span style={{ color: "#64748b", display: "block", fontSize: "0.72rem", fontWeight: 700, textTransform: "uppercase" }}>
@@ -584,7 +594,7 @@ function AnalyzerTab({
                   value={patient.name}
                   onChange={(e) => {
                     setPatient({ ...patient, name: e.target.value });
-                    if (e.target.value.trim()) setNameError("");
+                    if (e.target.value.trim()) nameError && "";
                   }}
                   style={{
                     width: "100%",
@@ -694,6 +704,19 @@ function AnalyzerTab({
                 </button>
               ))}
             </div>
+
+            {uploadedImage && (
+              <div style={{ marginBottom: "14px", textAlign: "center" }}>
+                <span style={{ fontSize: "0.75rem", color: "#64748b", display: "block", marginBottom: "4px" }}>
+                  📷 Uploaded Clinical Slide Scan:
+                </span>
+                <img
+                  src={uploadedImage}
+                  alt="Uploaded Slide"
+                  style={{ maxHeight: "120px", maxWidth: "100%", borderRadius: "8px", border: "1px solid #cbd5e1", objectFit: "contain" }}
+                />
+              </div>
+            )}
 
             <div
               style={{
@@ -1321,7 +1344,6 @@ function ClinicalReportModal({
             </div>
           </div>
 
-          {/* Report Diagnostic Interpretation / Why this group? */}
           <div style={{ background: "#f8fafc", border: "1px solid #e2e8f0", borderRadius: "8px", padding: "14px", marginBottom: "20px" }}>
             <span style={{ fontSize: "0.78rem", fontWeight: 800, color: "#0f172a", textTransform: "uppercase" }}>
               Diagnostic Scientific Basis (Kyu Aaya Yeh Group):
