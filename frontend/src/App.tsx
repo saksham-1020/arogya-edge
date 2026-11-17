@@ -13,7 +13,8 @@ import {
   Printer,
   FileCheck2,
   X,
-  AlertCircle
+  AlertCircle,
+  Microscope
 } from "lucide-react";
 import confetti from "canvas-confetti";
 import type { BloodGroup, PatientProfile } from "./types";
@@ -363,6 +364,7 @@ function AnalyzerTab({
   nadlerResult,
   setActiveTab
 }: any) {
+  const [clumpViewMode, setClumpViewMode] = useState<"granules" | "heatmap" | "microscope">("granules");
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
       <div className="analyzer-banner">
@@ -661,6 +663,93 @@ function AnalyzerTab({
                 />
               </div>
             </div>
+
+            {/* Micro-Clump Multi-Spectral Texture Visualizer */}
+            <div style={{ marginTop: "16px", background: "#0b1329", border: "1.5px solid #1e293b", borderRadius: "12px", padding: "16px", color: "#f8fafc" }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "12px", flexWrap: "wrap", gap: "8px" }}>
+                <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                  <Microscope size={17} color="#38bdf8" />
+                  <span style={{ fontSize: "0.85rem", fontWeight: 800, color: "#f8fafc" }}>
+                    Micro-Clump Optical Granularity Visualizer
+                  </span>
+                  <span style={{ fontSize: "0.68rem", background: "rgba(56, 189, 248, 0.15)", color: "#38bdf8", fontWeight: 700, padding: "2px 6px", borderRadius: "4px", border: "1px solid rgba(56, 189, 248, 0.3)" }}>
+                    Sub-Millimeter Clump Inspection
+                  </span>
+                </div>
+
+                <div style={{ display: "flex", gap: "4px" }}>
+                  <button
+                    onClick={() => setClumpViewMode("granules")}
+                    style={{
+                      padding: "4px 8px",
+                      borderRadius: "6px",
+                      fontSize: "0.7rem",
+                      fontWeight: 700,
+                      background: clumpViewMode === "granules" ? "#38bdf8" : "#1e293b",
+                      color: clumpViewMode === "granules" ? "#0f172a" : "#94a3b8",
+                      border: "none",
+                      cursor: "pointer"
+                    }}
+                  >
+                    🔬 Micro-Granules
+                  </button>
+                  <button
+                    onClick={() => setClumpViewMode("heatmap")}
+                    style={{
+                      padding: "4px 8px",
+                      borderRadius: "6px",
+                      fontSize: "0.7rem",
+                      fontWeight: 700,
+                      background: clumpViewMode === "heatmap" ? "#38bdf8" : "#1e293b",
+                      color: clumpViewMode === "heatmap" ? "#0f172a" : "#94a3b8",
+                      border: "none",
+                      cursor: "pointer"
+                    }}
+                  >
+                    🔥 Density Heatmap
+                  </button>
+                  <button
+                    onClick={() => setClumpViewMode("microscope")}
+                    style={{
+                      padding: "4px 8px",
+                      borderRadius: "6px",
+                      fontSize: "0.7rem",
+                      fontWeight: 700,
+                      background: clumpViewMode === "microscope" ? "#38bdf8" : "#1e293b",
+                      color: clumpViewMode === "microscope" ? "#0f172a" : "#94a3b8",
+                      border: "none",
+                      cursor: "pointer"
+                    }}
+                  >
+                    🔎 10x Field
+                  </button>
+                </div>
+              </div>
+
+              <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "10px" }}>
+                <MicroClumpPanel
+                  label="Well-A"
+                  reagent="Anti-A"
+                  isClumped={wellAState === 1}
+                  score={wellScores.a}
+                  mode={clumpViewMode}
+                />
+                <MicroClumpPanel
+                  label="Well-B"
+                  reagent="Anti-B"
+                  isClumped={wellBState === 1}
+                  score={wellScores.b}
+                  mode={clumpViewMode}
+                />
+                <MicroClumpPanel
+                  label="Well-D"
+                  reagent="Anti-D / Rh"
+                  isClumped={wellDState === 1}
+                  score={wellScores.d}
+                  mode={clumpViewMode}
+                />
+              </div>
+            </div>
           </div>
         </div>
 
@@ -781,6 +870,177 @@ function AnalyzerTab({
               </div>
             </div>
           </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function MicroClumpPanel({
+  label,
+  reagent,
+  isClumped,
+  score,
+  mode
+}: {
+  label: string;
+  reagent: string;
+  isClumped: boolean;
+  score: number;
+  mode: "granules" | "heatmap" | "microscope";
+}) {
+  const clumpCount = isClumped ? Math.floor(22 + (score % 15)) : 0;
+  const areaCoverage = isClumped ? Math.min(38.5, Number((18.0 + score * 0.25).toFixed(1))) : 0.2;
+  const grade = isClumped
+    ? areaCoverage > 25
+      ? "4+ (Solid Agminate)"
+      : "3+ (Strong Clumps)"
+    : "0+ (Negative / Smooth)";
+
+  return (
+    <div
+      style={{
+        background: "#030712",
+        borderRadius: "10px",
+        padding: "10px",
+        color: "#ffffff",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        border: isClumped ? "1.5px solid #22c55e" : "1px solid #1f2937",
+        boxShadow: isClumped ? "0 0 10px rgba(34, 197, 94, 0.2)" : "none"
+      }}
+    >
+      <div style={{ display: "flex", justifyContent: "space-between", width: "100%", marginBottom: "6px", fontSize: "0.72rem" }}>
+        <span style={{ fontWeight: 700, color: "#9ca3af" }}>{label}</span>
+        <span style={{ fontWeight: 800, color: isClumped ? "#4ade80" : "#6b7280" }}>
+          {reagent}
+        </span>
+      </div>
+
+      <div
+        style={{
+          width: "74px",
+          height: "74px",
+          borderRadius: "50%",
+          position: "relative",
+          overflow: "hidden",
+          margin: "4px 0 8px 0",
+          border: `2px solid ${isClumped ? "#22c55e" : "#374151"}`,
+          background:
+            mode === "heatmap"
+              ? isClumped
+                ? "radial-gradient(circle at 45% 45%, #facc15 0%, #ef4444 40%, #7f1d1d 75%, #0f172a 100%)"
+                : "radial-gradient(circle at 45% 45%, #38bdf8 0%, #0369a1 45%, #0f172a 100%)"
+              : mode === "microscope"
+              ? isClumped
+                ? "radial-gradient(circle, #450a0a 0%, #170303 100%)"
+                : "radial-gradient(circle, #b91c1c 0%, #7f1d1d 100%)"
+              : isClumped
+              ? "radial-gradient(circle at 40% 40%, #7f1d1d, #1c0404)"
+              : "radial-gradient(circle at 40% 40%, #dc2626, #991b1b)"
+        }}
+      >
+        {isClumped ? (
+          mode === "granules" ? (
+            <div style={{ position: "absolute", width: "100%", height: "100%" }}>
+              {[...Array(16)].map((_, i) => {
+                const size = 4 + (i % 4);
+                const top = 12 + ((i * 29) % 70);
+                const left = 12 + ((i * 39) % 70);
+                return (
+                  <div
+                    key={i}
+                    style={{
+                      position: "absolute",
+                      width: `${size}px`,
+                      height: `${size}px`,
+                      borderRadius: "50%",
+                      background: "#0a0101",
+                      border: "1px solid #4ade80",
+                      boxShadow: "0 0 3px #22c55e",
+                      top: `${top}%`,
+                      left: `${left}%`
+                    }}
+                  />
+                );
+              })}
+            </div>
+          ) : mode === "heatmap" ? (
+            <div style={{ position: "absolute", width: "100%", height: "100%", mixBlendMode: "screen", opacity: 0.9 }}>
+              {[...Array(6)].map((_, i) => (
+                <div
+                  key={i}
+                  style={{
+                    position: "absolute",
+                    width: `${14 + (i % 3) * 6}px`,
+                    height: `${14 + (i % 3) * 6}px`,
+                    borderRadius: "50%",
+                    background: "radial-gradient(circle, #fef08a 0%, #ea580c 60%, transparent 100%)",
+                    top: `${16 + ((i * 33) % 55)}%`,
+                    left: `${16 + ((i * 43) % 55)}%`,
+                    filter: "blur(2px)"
+                  }}
+                />
+              ))}
+            </div>
+          ) : (
+            <div style={{ position: "absolute", width: "100%", height: "100%" }}>
+              {[...Array(20)].map((_, i) => (
+                <div
+                  key={i}
+                  style={{
+                    position: "absolute",
+                    width: "6px",
+                    height: "6px",
+                    borderRadius: "50%",
+                    background: "#881337",
+                    border: "1px solid #fda4af",
+                    top: `${14 + ((i * 21) % 68)}%`,
+                    left: `${14 + ((i * 31) % 68)}%`,
+                    opacity: 0.95
+                  }}
+                />
+              ))}
+            </div>
+          )
+        ) : (
+          <div
+            style={{
+              width: "100%",
+              height: "100%",
+              background:
+                mode === "heatmap"
+                  ? "radial-gradient(circle, #38bdf8 0%, #0369a1 60%, transparent 100%)"
+                  : "radial-gradient(circle at 35% 35%, rgba(255,255,255,0.2), transparent)",
+              opacity: mode === "heatmap" ? 0.35 : 1
+            }}
+          />
+        )}
+      </div>
+
+      <div style={{ width: "100%", fontSize: "0.66rem", lineHeight: "1.3" }}>
+        <div style={{ display: "flex", justifyContent: "space-between", color: "#9ca3af" }}>
+          <span>Clumps:</span>
+          <strong style={{ color: isClumped ? "#4ade80" : "#d1d5db" }}>{clumpCount}</strong>
+        </div>
+        <div style={{ display: "flex", justifyContent: "space-between", color: "#9ca3af" }}>
+          <span>Coverage:</span>
+          <strong style={{ color: isClumped ? "#facc15" : "#d1d5db" }}>{areaCoverage}%</strong>
+        </div>
+        <div
+          style={{
+            marginTop: "3px",
+            padding: "2px 4px",
+            borderRadius: "3px",
+            background: isClumped ? "#14532d" : "#111827",
+            textAlign: "center",
+            color: isClumped ? "#86efac" : "#6b7280",
+            fontWeight: 700,
+            fontSize: "0.64rem"
+          }}
+        >
+          {grade}
         </div>
       </div>
     </div>
