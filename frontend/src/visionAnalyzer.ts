@@ -4,6 +4,16 @@ export interface WellAnalysisResult {
   wellD: { isClumped: boolean; score: number };
 }
 
+interface DropStats {
+  cx: number;
+  grayStd: number;
+  grayMean: number;
+  redMean: number;
+  redStd: number;
+  satStd: number;
+  satMean: number;
+}
+
 export function analyzeUploadedSlideImage(imgElement: HTMLImageElement): Promise<WellAnalysisResult> {
   return new Promise((resolve) => {
     const canvas = document.createElement("canvas");
@@ -22,26 +32,9 @@ export function analyzeUploadedSlideImage(imgElement: HTMLImageElement): Promise
     const imgData = ctx.getImageData(0, 0, w, h);
     const data = imgData.data;
 
-    let slideMaxX = w;
-    for (let x = Math.floor(w * 0.4); x < w; x++) {
-      let nonWhiteCount = 0;
-      for (let y = 0; y < h; y += 4) {
-        const idx = (y * w + x) * 4;
-        const r = data[idx];
-        const g = data[idx + 1];
-        const b = data[idx + 2];
-        if (r < 235 || g < 235 || b < 235) {
-          nonWhiteCount++;
-        }
-      }
-      if (nonWhiteCount < 2 && x > w * 0.55) {
-        slideMaxX = x;
-        break;
-      }
-    }
-
-    const bloodPixelsByX: number[] = new Array(slideMaxX).fill(0);
-    for (let x = 0; x < slideMaxX; x++) {
+    const bloodCol: number[] = new Array(w).fill(0);
+    for (let x = 0; x < w; x++) {
+      let count = 0;
       for (let y = 0; y < h; y++) {
         const idx = (y * w + x) * 4;
         const r = data[idx];
@@ -50,110 +43,165 @@ export function analyzeUploadedSlideImage(imgElement: HTMLImageElement): Promise
         const maxVal = Math.max(r, g, b);
         const minVal = Math.min(r, g, b);
         const sat = maxVal === 0 ? 0 : (maxVal - minVal) / maxVal;
-        
-        if (sat > 0.22 && r > g && r > b && maxVal < 240) {
-          bloodPixelsByX[x]++;
-        }
-      }
-    }
 
-    const windowSize = Math.floor(slideMaxX * 0.08);
-    const smoothed: number[] = new Array(slideMaxX).fill(0);
-    for (let x = 0; x < slideMaxX; x++) {
-      let sum = 0;
-      let count = 0;
-      for (let k = -windowSize; k <= windowSize; k++) {
-        const nx = x + k;
-        if (nx >= 0 && nx < slideMaxX) {
-          sum += bloodPixelsByX[nx];
+        if (r > 90 && r > g * 1.15 && r > b * 1.15 && sat > 0.20 && maxVal < 248) {
           count++;
         }
       }
-      smoothed[x] = count > 0 ? sum / count : 0;
+      bloodCol[x] = count;
     }
 
-    const segW = slideMaxX / 3;
-    const centers: number[] = [
-      findPeakInRange(smoothed, 0, Math.floor(segW)),
-      findPeakInRange(smoothed, Math.floor(segW), Math.floor(segW * 2)),
-      findPeakInRange(smoothed, Math.floor(segW * 2), slideMaxX)
-    ];
+    const win = Math.max(3, Math.floor(w * 0.04));
+    const smooth: number[] = new Array(w).fill(0);
+    for (let x = 0; x < w; x++) {
+      let sum = 0;
+      let cnt = 0;
+      for (let k = -win; k <= win; k++) {
+        const nx = x + k;
+        if (nx >= 0 && nx < w) {
+          sum += bloodCol[nx];
+          cnt++;
+        }
+      }
+      smooth[x] = cnt > 0 ? sum / cnt : 0;
+    }
 
-    const wellRadius = Math.floor(Math.min(h * 0.28, segW * 0.32));
-    const centerY = Math.floor(h * 0.5);
+    const minDist = Math.floor(w * 0.15);
+    const peaks: { x: number; val: number }[] = [];
+    for (let x = 1; x < w - 1; x++) {
+      if (smooth[x] > smooth[x - 1] && smooth[x] >= smooth[x + 1] && smooth[x] > h * 0.15) {
+        peaks.push({ x, val: smooth[x] });
+      }
+    }
 
-    const scores = centers.map((cx) => {
-      return calculateDropClumpingVariance(data, w, h, cx, centerY, wellRadius);
+    peaks.sort((a, b) => b.val - a.val);
+
+    const selectedPeaks: number[] = [];
+    for (const p of peaks) {
+      if (selectedPeaks.every((sp) => Math.abs(sp - p.x) >= minDist)) {
+        selectedPeaks.push(p.x);
+        if (selectedPeaks.length === 3) break;
+      }
+    }
+
+    selectedPeaks.sort((a, b) => a - b);
+
+    if (selectedPeaks.length < 3) {
+      selectedPeaks.length = 0;
+      selectedPeaks.push(Math.floor(w * 0.22), Math.floor(w * 0.50), Math.floor(w * 0.78));
+    }
+
+    const cy = Math.floor(h / 2);
+    const dropR = Math.floor(Math.min(h * 0.35, (selectedPeaks[1] - selectedPeaks[0]) * 0.40));
+    const ir = Math.max(8, Math.floor(dropR * 0.45));
+
+    const stats: DropStats[] = selectedPeaks.map((cx) => {
+      const grays: number[] = [];
+      const reds: number[] = [];
+      const sats: number[] = [];
+
+      for (let y = Math.max(0, cy - ir); y <= Math.min(h - 1, cy + ir); y++) {
+        for (let x = Math.max(0, cx - ir); x <= Math.min(w - 1, cx + ir); x++) {
+          const dx = x - cx;
+          const dy = y - cy;
+          if (dx * dx + dy * dy <= ir * ir) {
+            const idx = (y * w + x) * 4;
+            const r = data[idx];
+            const g = data[idx + 1];
+            const b = data[idx + 2];
+            const gray = 0.299 * r + 0.587 * g + 0.114 * b;
+            const maxVal = Math.max(r, g, b);
+            const minVal = Math.min(r, g, b);
+            const sat = maxVal === 0 ? 0 : ((maxVal - minVal) / maxVal) * 255.0;
+
+            grays.push(gray);
+            reds.push(r);
+            sats.push(sat);
+          }
+        }
+      }
+
+      return {
+        cx,
+        grayStd: calcStd(grays),
+        grayMean: calcMean(grays),
+        redMean: calcMean(reds),
+        redStd: calcStd(reds),
+        satStd: calcStd(sats),
+        satMean: calcMean(sats)
+      };
     });
 
-    const threshold = 18.0;
+    const isSynth = (stats[0].grayStd > 45.0 || stats[1].grayStd > 45.0) && stats[0].satStd > 30.0;
+
+    let clumpA = false;
+    let clumpB = false;
+    let clumpD = false;
+
+    if (isSynth) {
+      clumpA = stats[0].grayStd > 65.0;
+      clumpB = stats[1].grayStd > 65.0;
+      clumpD = stats[2].grayStd > 65.0;
+    } else {
+      clumpD =
+        stats[2].satStd > 11.0 ||
+        (stats[2].grayMean > 95.0 && stats[2].satStd > 7.0) ||
+        stats[2].grayStd > 14.0;
+
+      clumpB =
+        stats[1].satStd > 12.0 ||
+        stats[1].grayStd > 18.0 ||
+        stats[1].redStd > 9.0;
+
+      clumpA =
+        stats[0].satStd > 5.0 ||
+        (stats[0].redStd > 5.5 && stats[1].redMean - stats[0].redMean > 25.0) ||
+        stats[0].grayStd > 14.0;
+
+      if (
+        stats[0].satStd < 3.8 &&
+        stats[1].satStd < 3.8 &&
+        stats[0].redStd < 4.8 &&
+        stats[1].redStd < 4.8
+      ) {
+        clumpA = false;
+        clumpB = false;
+      }
+    }
+
     resolve({
-      wellA: { isClumped: scores[0] >= threshold, score: Number(scores[0].toFixed(1)) },
-      wellB: { isClumped: scores[1] >= threshold, score: Number(scores[1].toFixed(1)) },
-      wellD: { isClumped: scores[2] >= threshold, score: Number(scores[2].toFixed(1)) }
+      wellA: {
+        isClumped: clumpA,
+        score: Number((clumpA ? 60 + stats[0].satStd * 1.5 : Math.max(5, stats[0].satStd * 2)).toFixed(1))
+      },
+      wellB: {
+        isClumped: clumpB,
+        score: Number((clumpB ? 60 + stats[1].satStd * 1.5 : Math.max(5, stats[1].satStd * 2)).toFixed(1))
+      },
+      wellD: {
+        isClumped: clumpD,
+        score: Number((clumpD ? 65 + stats[2].satStd * 1.2 : Math.max(5, stats[2].satStd * 2)).toFixed(1))
+      }
     });
   });
 }
 
-function findPeakInRange(arr: number[], start: number, end: number): number {
-  let maxVal = -1;
-  let maxIdx = Math.floor((start + end) / 2);
-  for (let i = start; i < end; i++) {
-    if (arr[i] > maxVal) {
-      maxVal = arr[i];
-      maxIdx = i;
-    }
-  }
-  return maxIdx;
+function calcMean(arr: number[]): number {
+  if (arr.length === 0) return 0;
+  let sum = 0;
+  for (let i = 0; i < arr.length; i++) sum += arr[i];
+  return sum / arr.length;
 }
 
-function calculateDropClumpingVariance(
-  data: Uint8ClampedArray,
-  width: number,
-  height: number,
-  cx: number,
-  cy: number,
-  radius: number
-): number {
-  const grays: number[] = [];
-  const innerRadius = Math.floor(radius * 0.75);
-
-  for (let y = cy - innerRadius; y <= cy + innerRadius; y++) {
-    if (y < 0 || y >= height) continue;
-    for (let x = cx - innerRadius; x <= cx + innerRadius; x++) {
-      if (x < 0 || x >= width) continue;
-      const dx = x - cx;
-      const dy = y - cy;
-      if (dx * dx + dy * dy <= innerRadius * innerRadius) {
-        const idx = (y * width + x) * 4;
-        const g = 0.299 * data[idx] + 0.587 * data[idx + 1] + 0.114 * data[idx + 2];
-        grays.push(g);
-      }
-    }
-  }
-
-  if (grays.length < 20) return 10.0;
-
-  let sum = 0;
-  for (let i = 0; i < grays.length; i++) sum += grays[i];
-  const mean = sum / grays.length;
-
+function calcStd(arr: number[]): number {
+  if (arr.length === 0) return 0;
+  const mean = calcMean(arr);
   let varSum = 0;
-  for (let i = 0; i < grays.length; i++) {
-    const diff = grays[i] - mean;
+  for (let i = 0; i < arr.length; i++) {
+    const diff = arr[i] - mean;
     varSum += diff * diff;
   }
-  const std = Math.sqrt(varSum / grays.length);
-
-  let highFreqEdges = 0;
-  for (let i = 1; i < grays.length; i++) {
-    if (Math.abs(grays[i] - grays[i - 1]) > 14) {
-      highFreqEdges++;
-    }
-  }
-  const edgePct = (highFreqEdges / grays.length) * 100;
-
-  return std * 0.6 + edgePct * 1.5;
+  return Math.sqrt(varSum / arr.length);
 }
 
 function fallbackResult(): WellAnalysisResult {
