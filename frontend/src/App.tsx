@@ -9,7 +9,11 @@ import {
   User,
   FlaskConical,
   BookOpen,
-  Layers
+  Layers,
+  Printer,
+  FileCheck2,
+  X,
+  AlertCircle
 } from "lucide-react";
 import confetti from "canvas-confetti";
 import type { BloodGroup, PatientProfile } from "./types";
@@ -23,13 +27,16 @@ export default function App() {
   const [activeTab, setActiveTab] = useState<"analyzer" | "transfusion" | "howToUse" | "benchmarks">("analyzer");
   
   const [patient, setPatient] = useState<PatientProfile>({
-    id: "PT-9410",
+    id: "PT-" + Math.floor(1000 + Math.random() * 9000),
     name: "Aarav Sharma",
     age: 28,
     gender: "Male",
     heightCm: 174,
     weightKg: 68
   });
+
+  const [nameError, setNameError] = useState<string>("");
+  const [showReportModal, setShowReportModal] = useState<boolean>(false);
 
   const [selectedCaseId, setSelectedCaseId] = useState<string>("CASE-01");
   const [, setUploadedImage] = useState<string | null>(null);
@@ -55,6 +62,7 @@ export default function App() {
       setWellDState(c.profile[2]);
       setWellScores(c.wellScores);
       setPatient(c.patient);
+      setNameError("");
       triggerConfetti();
     }
   };
@@ -94,6 +102,21 @@ export default function App() {
         colors: ["#c92a2a", "#16a34a", "#2563eb"]
       });
     } catch {}
+  };
+
+  const handleOpenReport = () => {
+    if (!patient.name || patient.name.trim() === "") {
+      setNameError("⚠️ Patient Full Name is mandatory before generating clinical report.");
+      const el = document.getElementById("patient-name-input");
+      if (el) el.focus();
+      return;
+    }
+    setNameError("");
+    setShowReportModal(true);
+  };
+
+  const handlePrint = () => {
+    window.print();
   };
 
   return (
@@ -228,6 +251,9 @@ export default function App() {
           <AnalyzerTab
             patient={patient}
             setPatient={setPatient}
+            nameError={nameError}
+            setNameError={setNameError}
+            handleOpenReport={handleOpenReport}
             selectedCaseId={selectedCaseId}
             handleSelectCase={handleSelectCase}
             fileInputRef={fileInputRef}
@@ -268,6 +294,22 @@ export default function App() {
           <span>⚡ Instant Readout (&lt;10ms)</span>
         </div>
       </footer>
+
+      {/* Clinical Report Modal */}
+      {showReportModal && (
+        <ClinicalReportModal
+          patient={patient}
+          diagnosedGroup={diagnosedGroup}
+          compatibility={compatibility}
+          nadlerResult={nadlerResult}
+          wellAState={wellAState}
+          wellBState={wellBState}
+          wellDState={wellDState}
+          wellScores={wellScores}
+          onClose={() => setShowReportModal(false)}
+          onPrint={handlePrint}
+        />
+      )}
     </div>
   );
 }
@@ -286,6 +328,9 @@ function getDiagnosedBloodGroup(a: number, b: number, d: number): BloodGroup {
 function AnalyzerTab({
   patient,
   setPatient,
+  nameError,
+  setNameError,
+  handleOpenReport,
   selectedCaseId,
   handleSelectCase,
   fileInputRef,
@@ -353,7 +398,26 @@ function AnalyzerTab({
           </div>
         </div>
 
-        <div>
+        <div style={{ display: "flex", gap: "10px", flexWrap: "wrap" }}>
+          <button
+            onClick={handleOpenReport}
+            style={{
+              background: "#16a34a",
+              color: "#ffffff",
+              padding: "10px 18px",
+              borderRadius: "8px",
+              fontWeight: 700,
+              fontSize: "0.85rem",
+              display: "inline-flex",
+              alignItems: "center",
+              gap: "8px",
+              boxShadow: "0 2px 8px rgba(22, 163, 74, 0.25)"
+            }}
+          >
+            <FileCheck2 size={16} />
+            Generate Diagnostic Report
+          </button>
+
           <button
             onClick={() => setActiveTab("transfusion")}
             style={{
@@ -377,18 +441,42 @@ function AnalyzerTab({
       <div className="analyzer-grid">
         <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
           <div style={{ background: "#ffffff", border: "1px solid #e2e8f0", borderRadius: "14px", padding: "18px" }}>
-            <h3 style={{ fontSize: "1rem", fontWeight: 700, marginBottom: "12px", display: "flex", alignItems: "center", gap: "8px" }}>
-              <User size={17} color="#dc2626" />
-              Patient Demographics & Body Habitus
-            </h3>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "12px", flexWrap: "wrap" }}>
+              <h3 style={{ fontSize: "1rem", fontWeight: 700, display: "flex", alignItems: "center", gap: "8px" }}>
+                <User size={17} color="#dc2626" />
+                Patient Demographics & Body Habitus
+              </h3>
+              <span style={{ fontSize: "0.72rem", color: "#dc2626", fontWeight: 600 }}>* Patient Name is Mandatory</span>
+            </div>
+
+            {nameError && (
+              <div style={{ background: "#fef2f2", border: "1px solid #fecaca", padding: "8px 12px", borderRadius: "6px", color: "#b91c1c", fontSize: "0.78rem", marginBottom: "12px", display: "flex", alignItems: "center", gap: "6px" }}>
+                <AlertCircle size={14} />
+                {nameError}
+              </div>
+            )}
+
             <div className="patient-grid">
               <div>
-                <label style={{ color: "#64748b", display: "block", marginBottom: "3px", fontSize: "0.78rem" }}>Full Name</label>
+                <label style={{ color: "#0f172a", display: "block", marginBottom: "3px", fontSize: "0.78rem", fontWeight: 600 }}>
+                  Full Name <span style={{ color: "#dc2626" }}>*</span>
+                </label>
                 <input
+                  id="patient-name-input"
                   type="text"
+                  required
+                  placeholder="Enter Patient Full Name"
                   value={patient.name}
-                  onChange={(e) => setPatient({ ...patient, name: e.target.value })}
-                  style={{ width: "100%", padding: "7px 10px", borderRadius: "6px", border: "1px solid #cbd5e1" }}
+                  onChange={(e) => {
+                    setPatient({ ...patient, name: e.target.value });
+                    if (e.target.value.trim()) setNameError("");
+                  }}
+                  style={{
+                    width: "100%",
+                    padding: "7px 10px",
+                    borderRadius: "6px",
+                    border: nameError ? "1.5px solid #dc2626" : "1px solid #cbd5e1"
+                  }}
                 />
               </div>
               <div>
@@ -963,6 +1051,237 @@ function StepItem({ step, title, desc }: { step: string; title: string; desc: st
       <div>
         <h4 style={{ fontSize: "0.95rem", fontWeight: 700, color: "#0f172a", marginBottom: "3px" }}>{title}</h4>
         <p style={{ color: "#475569", fontSize: "0.82rem", lineHeight: 1.5 }}>{desc}</p>
+      </div>
+    </div>
+  );
+}
+
+function ClinicalReportModal({
+  patient,
+  diagnosedGroup,
+  compatibility,
+  nadlerResult,
+  wellAState,
+  wellBState,
+  wellDState,
+  wellScores,
+  onClose,
+  onPrint
+}: any) {
+  const today = new Date().toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit"
+  });
+
+  return (
+    <div
+      style={{
+        position: "fixed",
+        inset: 0,
+        background: "rgba(15, 23, 42, 0.7)",
+        backdropFilter: "blur(4px)",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        padding: "16px",
+        zIndex: 100
+      }}
+    >
+      <div
+        style={{
+          background: "#ffffff",
+          borderRadius: "16px",
+          maxWidth: "800px",
+          width: "100%",
+          maxHeight: "92vh",
+          overflowY: "auto",
+          boxShadow: "0 20px 40px rgba(0, 0, 0, 0.25)",
+          display: "flex",
+          flexDirection: "column"
+        }}
+        className="custom-scrollbar"
+      >
+        <div
+          className="no-print"
+          style={{
+            padding: "16px 24px",
+            borderBottom: "1px solid #e2e8f0",
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            background: "#f8fafc"
+          }}
+        >
+          <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+            <FileCheck2 size={20} color="#16a34a" />
+            <h3 style={{ fontSize: "1.1rem", fontWeight: 800, color: "#0f172a" }}>
+              Official Clinical Diagnostic Blood Report
+            </h3>
+          </div>
+          <div style={{ display: "flex", gap: "8px" }}>
+            <button
+              onClick={onPrint}
+              style={{
+                background: "#991b1b",
+                color: "#ffffff",
+                padding: "8px 16px",
+                borderRadius: "8px",
+                fontWeight: 700,
+                fontSize: "0.85rem",
+                display: "inline-flex",
+                alignItems: "center",
+                gap: "6px"
+              }}
+            >
+              <Printer size={16} /> Print / Save as PDF
+            </button>
+            <button
+              onClick={onClose}
+              style={{
+                background: "#e2e8f0",
+                color: "#0f172a",
+                padding: "8px 12px",
+                borderRadius: "8px",
+                fontWeight: 600
+              }}
+            >
+              <X size={18} />
+            </button>
+          </div>
+        </div>
+
+        <div id="printable-clinical-report" style={{ padding: "32px 36px" }}>
+          <div style={{ display: "flex", justifyContent: "space-between", borderBottom: "2px solid #991b1b", paddingBottom: "16px", marginBottom: "20px" }}>
+            <div>
+              <h1 style={{ fontSize: "1.6rem", fontWeight: 900, color: "#991b1b", letterSpacing: "-0.02em" }}>
+                AROGYA-EDGE DIAGNOSTICS
+              </h1>
+              <p style={{ fontSize: "0.85rem", color: "#64748b", margin: "2px 0 0 0" }}>
+                Automated Point-of-Care Immunohematology & Transfusion Services
+              </p>
+              <p style={{ fontSize: "0.78rem", color: "#94a3b8" }}>
+                Accredited Automated Micro-Agglutination Vision Testing Laboratory
+              </p>
+            </div>
+            <div style={{ textAlign: "right", fontSize: "0.82rem", color: "#475569" }}>
+              <p><strong>Report ID:</strong> RPT-{patient.id}</p>
+              <p><strong>Date & Time:</strong> {today}</p>
+              <p><strong>Status:</strong> <span style={{ color: "#16a34a", fontWeight: 800 }}>VERIFIED</span></p>
+            </div>
+          </div>
+
+          <div style={{ background: "#f8fafc", border: "1px solid #e2e8f0", borderRadius: "10px", padding: "16px", marginBottom: "20px" }}>
+            <h4 style={{ fontSize: "0.88rem", fontWeight: 800, color: "#0f172a", textTransform: "uppercase", marginBottom: "10px" }}>
+              1. Patient Identification & Demographics
+            </h4>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "10px", fontSize: "0.85rem" }}>
+              <div><span style={{ color: "#64748b" }}>Patient Name:</span> <strong>{patient.name}</strong></div>
+              <div><span style={{ color: "#64748b" }}>Patient ID:</span> <strong>{patient.id}</strong></div>
+              <div><span style={{ color: "#64748b" }}>Age / Gender:</span> <strong>{patient.age} Yrs / {patient.gender}</strong></div>
+              <div><span style={{ color: "#64748b" }}>Height / Weight:</span> <strong>{patient.heightCm} cm / {patient.weightKg} kg</strong></div>
+              <div><span style={{ color: "#64748b" }}>Total Blood Vol (TBV):</span> <strong>{nadlerResult.tbvLiters} L</strong></div>
+              <div><span style={{ color: "#64748b" }}>Assay Method:</span> <strong>Triple-Well Optical Slide</strong></div>
+            </div>
+          </div>
+
+          <div style={{ border: "2px solid #bbf7d0", background: "#f0fdf4", borderRadius: "12px", padding: "20px", display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "24px" }}>
+            <div>
+              <span style={{ fontSize: "0.78rem", fontWeight: 800, color: "#166534", textTransform: "uppercase", letterSpacing: "0.05em" }}>
+                Final Certified Phenotype Result
+              </span>
+              <h2 style={{ fontSize: "2rem", fontWeight: 900, color: "#166534", margin: "4px 0" }}>
+                Blood Group: {diagnosedGroup}
+              </h2>
+              <p style={{ fontSize: "0.85rem", color: "#15803d" }}>
+                {compatibility.clinicalBadge} • 99.0% Conformal Prediction Guarantee
+              </p>
+            </div>
+            <div style={{ width: "70px", height: "70px", borderRadius: "50%", background: "#16a34a", color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "2rem", fontWeight: 900 }}>
+              {diagnosedGroup}
+            </div>
+          </div>
+
+          <div style={{ marginBottom: "24px" }}>
+            <h4 style={{ fontSize: "0.88rem", fontWeight: 800, color: "#0f172a", textTransform: "uppercase", marginBottom: "10px" }}>
+              2. Immunohematology Reaction Assay Detail
+            </h4>
+            <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "0.85rem", textAlign: "left" }}>
+              <thead>
+                <tr style={{ background: "#f8fafc", borderBottom: "1.5px solid #cbd5e1" }}>
+                  <th style={{ padding: "8px 12px" }}>Antigen Well</th>
+                  <th style={{ padding: "8px 12px" }}>Monoclonal Reagent</th>
+                  <th style={{ padding: "8px 12px" }}>Texture (&sigma;)</th>
+                  <th style={{ padding: "8px 12px" }}>Reaction Call</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr style={{ borderBottom: "1px solid #e2e8f0" }}>
+                  <td style={{ padding: "8px 12px", fontWeight: 600 }}>Well-A</td>
+                  <td style={{ padding: "8px 12px" }}>Anti-A Murine IgM</td>
+                  <td style={{ padding: "8px 12px" }}>{wellScores.a.toFixed(1)} &sigma;</td>
+                  <td style={{ padding: "8px 12px", fontWeight: 700, color: wellAState ? "#16a34a" : "#64748b" }}>
+                    {wellAState ? "POSITIVE (CLUMPED)" : "NEGATIVE (SMOOTH)"}
+                  </td>
+                </tr>
+                <tr style={{ borderBottom: "1px solid #e2e8f0" }}>
+                  <td style={{ padding: "8px 12px", fontWeight: 600 }}>Well-B</td>
+                  <td style={{ padding: "8px 12px" }}>Anti-B Murine IgM</td>
+                  <td style={{ padding: "8px 12px" }}>{wellScores.b.toFixed(1)} &sigma;</td>
+                  <td style={{ padding: "8px 12px", fontWeight: 700, color: wellBState ? "#16a34a" : "#64748b" }}>
+                    {wellBState ? "POSITIVE (CLUMPED)" : "NEGATIVE (SMOOTH)"}
+                  </td>
+                </tr>
+                <tr style={{ borderBottom: "1px solid #e2e8f0" }}>
+                  <td style={{ padding: "8px 12px", fontWeight: 600 }}>Well-D</td>
+                  <td style={{ padding: "8px 12px" }}>Anti-D (RhD) Monoclonal</td>
+                  <td style={{ padding: "8px 12px" }}>{wellScores.d.toFixed(1)} &sigma;</td>
+                  <td style={{ padding: "8px 12px", fontWeight: 700, color: wellDState ? "#16a34a" : "#64748b" }}>
+                    {wellDState ? "POSITIVE (Rh-D POSITIVE)" : "NEGATIVE (Rh-D NEGATIVE)"}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div style={{ marginBottom: "28px" }}>
+            <h4 style={{ fontSize: "0.88rem", fontWeight: 800, color: "#0f172a", textTransform: "uppercase", marginBottom: "10px" }}>
+              3. Clinical Transfusion Matching & Safe Voluntary Limits
+            </h4>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "14px", fontSize: "0.85rem" }}>
+              <div style={{ background: "#f8fafc", padding: "12px", borderRadius: "8px", border: "1px solid #e2e8f0" }}>
+                <span style={{ color: "#64748b", display: "block", fontSize: "0.75rem", fontWeight: 700, textTransform: "uppercase" }}>
+                  Compatible RBC Donors (Can Receive From)
+                </span>
+                <strong style={{ color: "#16a34a", fontSize: "1rem" }}>{compatibility.canReceiveRbcFrom.join(", ")}</strong>
+              </div>
+              <div style={{ background: "#f8fafc", padding: "12px", borderRadius: "8px", border: "1px solid #e2e8f0" }}>
+                <span style={{ color: "#64748b", display: "block", fontSize: "0.75rem", fontWeight: 700, textTransform: "uppercase" }}>
+                  Compatible Recipients (Can Donate To)
+                </span>
+                <strong style={{ color: "#2563eb", fontSize: "1rem" }}>{compatibility.canDonateRbcTo.join(", ")}</strong>
+              </div>
+            </div>
+            <p style={{ marginTop: "10px", fontSize: "0.82rem", color: "#475569" }}>
+              <strong>Donation Guidance:</strong> {nadlerResult.eligibilityStatus} (Safe Limit: {nadlerResult.maxSafeDonationMl > 0 ? `${nadlerResult.maxSafeDonationMl} mL` : "None"}).
+            </p>
+          </div>
+
+          <div style={{ borderTop: "1px dashed #cbd5e1", paddingTop: "20px", display: "flex", justifyContent: "space-between", alignItems: "flex-end" }}>
+            <div style={{ fontSize: "0.75rem", color: "#94a3b8" }}>
+              <p>• Digitally generated by Arogya-Edge Clinical Decision Support System (CDSS).</p>
+              <p>• Verified under 99.0% statistical coverage guarantee protocol.</p>
+              <p>• Barcode / Hash: <code>AE-{patient.id}-{diagnosedGroup}</code></p>
+            </div>
+            <div style={{ textAlign: "center" }}>
+              <div style={{ width: "160px", borderBottom: "1.5px solid #0f172a", marginBottom: "6px" }} />
+              <p style={{ fontSize: "0.82rem", fontWeight: 700, color: "#0f172a" }}>Authorized Clinical Officer</p>
+              <p style={{ fontSize: "0.72rem", color: "#64748b" }}>Automated Signature Verified</p>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );

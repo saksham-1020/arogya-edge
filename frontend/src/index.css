@@ -206,3 +206,24 @@ input, select {
     gap: 12px;
   }
 }
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  #printable-clinical-report, #printable-clinical-report * {
+    visibility: visible;
+  }
+  #printable-clinical-report {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    margin: 0;
+    padding: 24px;
+    background: #ffffff !important;
+    color: #000000 !important;
+  }
+  .no-print {
+    display: none !important;
+  }
+}
