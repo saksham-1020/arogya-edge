@@ -99,133 +99,131 @@ export default function App() {
   return (
     <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}>
       <header
+        className="app-header"
         style={{
           background: "linear-gradient(135deg, #991b1b 0%, #dc2626 50%, #b91c1c 100%)",
           color: "#ffffff",
-          padding: "16px 28px",
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
           boxShadow: "0 4px 20px rgba(185, 28, 28, 0.25)",
           position: "sticky",
           top: 0,
           zIndex: 50
         }}
       >
-        <div style={{ display: "flex", alignItems: "center", gap: "14px" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
           <div
             style={{
-              width: "44px",
-              height: "44px",
+              width: "42px",
+              height: "42px",
               borderRadius: "12px",
               background: "rgba(255, 255, 255, 0.2)",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              backdropFilter: "blur(6px)"
+              backdropFilter: "blur(6px)",
+              flexShrink: 0
             }}
           >
-            <Droplet size={26} color="#ffffff" fill="#ffffff" />
+            <Droplet size={24} color="#ffffff" fill="#ffffff" />
           </div>
           <div>
-            <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-              <h1 style={{ fontSize: "1.35rem", fontWeight: 800, letterSpacing: "-0.02em" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "8px", flexWrap: "wrap" }}>
+              <h1 style={{ fontSize: "1.25rem", fontWeight: 800, letterSpacing: "-0.02em" }}>
                 Arogya-Edge Clinical CDSS
               </h1>
               <span
                 style={{
                   background: "#16a34a",
                   color: "#ffffff",
-                  fontSize: "0.72rem",
+                  fontSize: "0.7rem",
                   fontWeight: 700,
-                  padding: "3px 9px",
+                  padding: "2px 8px",
                   borderRadius: "999px",
                   letterSpacing: "0.05em",
                   textTransform: "uppercase"
                 }}
               >
-                Production Ready v2.4
+                v2.4 Live
               </span>
             </div>
-            <p style={{ fontSize: "0.82rem", opacity: 0.9, marginTop: "2px" }}>
-              Automated Micro-Agglutination Vision Platform & Clinical Transfusion Decision Support
+            <p style={{ fontSize: "0.8rem", opacity: 0.9, marginTop: "2px" }}>
+              Automated Micro-Agglutination Vision & Transfusion Decision Support
             </p>
           </div>
         </div>
 
-        <nav style={{ display: "flex", gap: "6px", background: "rgba(0, 0, 0, 0.2)", padding: "4px", borderRadius: "10px" }}>
+        <nav className="header-nav custom-scrollbar">
           <button
             onClick={() => setActiveTab("analyzer")}
             style={{
-              padding: "8px 16px",
+              padding: "8px 14px",
               borderRadius: "8px",
-              fontSize: "0.85rem",
+              fontSize: "0.82rem",
               fontWeight: 600,
               background: activeTab === "analyzer" ? "#ffffff" : "transparent",
               color: activeTab === "analyzer" ? "#991b1b" : "#ffffff",
               display: "flex",
               alignItems: "center",
-              gap: "7px"
+              gap: "6px"
             }}
           >
-            <FlaskConical size={16} />
+            <FlaskConical size={15} />
             Diagnostic Analyzer
           </button>
           <button
             onClick={() => setActiveTab("transfusion")}
             style={{
-              padding: "8px 16px",
+              padding: "8px 14px",
               borderRadius: "8px",
-              fontSize: "0.85rem",
+              fontSize: "0.82rem",
               fontWeight: 600,
               background: activeTab === "transfusion" ? "#ffffff" : "transparent",
               color: activeTab === "transfusion" ? "#991b1b" : "#ffffff",
               display: "flex",
               alignItems: "center",
-              gap: "7px"
+              gap: "6px"
             }}
           >
-            <Activity size={16} />
+            <Activity size={15} />
             Transfusion Engine
           </button>
           <button
             onClick={() => setActiveTab("benchmarks")}
             style={{
-              padding: "8px 16px",
+              padding: "8px 14px",
               borderRadius: "8px",
-              fontSize: "0.85rem",
+              fontSize: "0.82rem",
               fontWeight: 600,
               background: activeTab === "benchmarks" ? "#ffffff" : "transparent",
               color: activeTab === "benchmarks" ? "#991b1b" : "#ffffff",
               display: "flex",
               alignItems: "center",
-              gap: "7px"
+              gap: "6px"
             }}
           >
-            <ShieldCheck size={16} />
+            <ShieldCheck size={15} />
             Multi-Model Verification
           </button>
           <button
             onClick={() => setActiveTab("howToUse")}
             style={{
-              padding: "8px 16px",
+              padding: "8px 14px",
               borderRadius: "8px",
-              fontSize: "0.85rem",
+              fontSize: "0.82rem",
               fontWeight: 600,
               background: activeTab === "howToUse" ? "#ffffff" : "transparent",
               color: activeTab === "howToUse" ? "#991b1b" : "#ffffff",
               display: "flex",
               alignItems: "center",
-              gap: "7px"
+              gap: "6px"
             }}
           >
-            <BookOpen size={16} />
-            User Guide & Protocol
+            <BookOpen size={15} />
+            User Protocol
           </button>
         </nav>
       </header>
 
-      <main style={{ flex: 1, padding: "28px", maxWidth: "1440px", margin: "0 auto", width: "100%" }}>
+      <main className="main-content">
         {activeTab === "analyzer" && (
           <AnalyzerTab
             patient={patient}
@@ -260,25 +258,14 @@ export default function App() {
         {activeTab === "howToUse" && <HowToUseTab />}
       </main>
 
-      <footer
-        style={{
-          borderTop: "1px solid #e2e8f0",
-          background: "#ffffff",
-          padding: "20px 28px",
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          fontSize: "0.85rem",
-          color: "#64748b"
-        }}
-      >
+      <footer className="app-footer">
         <div>
-          <strong>Arogya-Edge Clinical Decision Support System (CDSS)</strong> • Point-of-Care Digital Health Architecture
+          <strong>Arogya-Edge Clinical Decision Support System (CDSS)</strong> • Point-of-Care Digital Health
         </div>
-        <div style={{ display: "flex", gap: "20px" }}>
-          <span>🔒 Mathematical Coverage Guarantee: 99.0%</span>
-          <span>🩸 Transfusion Hemolysis Risk: 0.00 (Zero Fatal Incompatibilities)</span>
-          <span>⚡ Instant Edge Readout (&lt;10ms)</span>
+        <div style={{ display: "flex", gap: "16px", flexWrap: "wrap", fontSize: "0.8rem" }}>
+          <span>🔒 99.0% Coverage Safety Guarantee</span>
+          <span>🩸 Transfusion Risk: 0.00 (Zero Hemolysis)</span>
+          <span>⚡ Instant Readout (&lt;10ms)</span>
         </div>
       </footer>
     </div>
@@ -319,74 +306,64 @@ function AnalyzerTab({
   setActiveTab
 }: any) {
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
-      <div
-        style={{
-          background: "#ffffff",
-          border: "1px solid #e2e8f0",
-          borderRadius: "14px",
-          padding: "20px 24px",
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          boxShadow: "0 2px 10px rgba(0,0,0,0.03)"
-        }}
-      >
-        <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
+    <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
+      <div className="analyzer-banner">
+        <div style={{ display: "flex", alignItems: "center", gap: "14px" }}>
           <div
             style={{
-              width: "56px",
-              height: "56px",
-              borderRadius: "16px",
+              width: "52px",
+              height: "52px",
+              borderRadius: "14px",
               background: "#fee2e2",
               color: "#dc2626",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              fontSize: "1.8rem",
-              fontWeight: 900
+              fontSize: "1.6rem",
+              fontWeight: 900,
+              flexShrink: 0
             }}
           >
             {diagnosedGroup}
           </div>
           <div>
-            <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-              <h2 style={{ fontSize: "1.4rem", fontWeight: 800, color: "#0f172a" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "8px", flexWrap: "wrap" }}>
+              <h2 style={{ fontSize: "1.25rem", fontWeight: 800, color: "#0f172a" }}>
                 Diagnosed Blood Phenotype: {diagnosedGroup}
               </h2>
               <span
                 style={{
                   background: "#dcfce7",
                   color: "#15803d",
-                  fontSize: "0.75rem",
+                  fontSize: "0.72rem",
                   fontWeight: 700,
-                  padding: "4px 10px",
+                  padding: "3px 9px",
                   borderRadius: "999px",
-                  display: "flex",
+                  display: "inline-flex",
                   alignItems: "center",
                   gap: "4px"
                 }}
               >
-                <CheckCircle2 size={13} /> 99.0% Conformal Safe Singleton
+                <CheckCircle2 size={12} /> 99.0% Safe Singleton
               </span>
             </div>
-            <p style={{ color: "#64748b", fontSize: "0.88rem", marginTop: "4px" }}>
-              Clinical Classification: <strong>{compatibility.clinicalBadge}</strong> • Frequency: {compatibility.rarityInPopulation}
+            <p style={{ color: "#64748b", fontSize: "0.82rem", marginTop: "4px" }}>
+              Clinical Status: <strong>{compatibility.clinicalBadge}</strong> ({compatibility.rarityInPopulation})
             </p>
           </div>
         </div>
 
-        <div style={{ display: "flex", gap: "12px" }}>
+        <div>
           <button
             onClick={() => setActiveTab("transfusion")}
             style={{
               background: "#991b1b",
               color: "#ffffff",
-              padding: "10px 20px",
+              padding: "10px 18px",
               borderRadius: "8px",
               fontWeight: 600,
-              fontSize: "0.88rem",
-              display: "flex",
+              fontSize: "0.85rem",
+              display: "inline-flex",
               alignItems: "center",
               gap: "8px"
             }}
@@ -397,16 +374,16 @@ function AnalyzerTab({
         </div>
       </div>
 
-      <div style={{ display: "grid", gridTemplateColumns: "1.1fr 0.9fr", gap: "24px" }}>
+      <div className="analyzer-grid">
         <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
-          <div style={{ background: "#ffffff", border: "1px solid #e2e8f0", borderRadius: "14px", padding: "20px" }}>
-            <h3 style={{ fontSize: "1.05rem", fontWeight: 700, marginBottom: "14px", display: "flex", alignItems: "center", gap: "8px" }}>
-              <User size={18} color="#dc2626" />
+          <div style={{ background: "#ffffff", border: "1px solid #e2e8f0", borderRadius: "14px", padding: "18px" }}>
+            <h3 style={{ fontSize: "1rem", fontWeight: 700, marginBottom: "12px", display: "flex", alignItems: "center", gap: "8px" }}>
+              <User size={17} color="#dc2626" />
               Patient Demographics & Body Habitus
             </h3>
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "12px", fontSize: "0.85rem" }}>
+            <div className="patient-grid">
               <div>
-                <label style={{ color: "#64748b", display: "block", marginBottom: "4px" }}>Full Name</label>
+                <label style={{ color: "#64748b", display: "block", marginBottom: "3px", fontSize: "0.78rem" }}>Full Name</label>
                 <input
                   type="text"
                   value={patient.name}
@@ -415,7 +392,7 @@ function AnalyzerTab({
                 />
               </div>
               <div>
-                <label style={{ color: "#64748b", display: "block", marginBottom: "4px" }}>Age (Years)</label>
+                <label style={{ color: "#64748b", display: "block", marginBottom: "3px", fontSize: "0.78rem" }}>Age (Years)</label>
                 <input
                   type="number"
                   value={patient.age}
@@ -424,7 +401,7 @@ function AnalyzerTab({
                 />
               </div>
               <div>
-                <label style={{ color: "#64748b", display: "block", marginBottom: "4px" }}>Gender</label>
+                <label style={{ color: "#64748b", display: "block", marginBottom: "3px", fontSize: "0.78rem" }}>Gender</label>
                 <select
                   value={patient.gender}
                   onChange={(e) => setPatient({ ...patient, gender: e.target.value as any })}
@@ -435,7 +412,7 @@ function AnalyzerTab({
                 </select>
               </div>
               <div>
-                <label style={{ color: "#64748b", display: "block", marginBottom: "4px" }}>Height (cm)</label>
+                <label style={{ color: "#64748b", display: "block", marginBottom: "3px", fontSize: "0.78rem" }}>Height (cm)</label>
                 <input
                   type="number"
                   value={patient.heightCm}
@@ -444,7 +421,7 @@ function AnalyzerTab({
                 />
               </div>
               <div>
-                <label style={{ color: "#64748b", display: "block", marginBottom: "4px" }}>Weight (kg)</label>
+                <label style={{ color: "#64748b", display: "block", marginBottom: "3px", fontSize: "0.78rem" }}>Weight (kg)</label>
                 <input
                   type="number"
                   value={patient.weightKg}
@@ -453,19 +430,19 @@ function AnalyzerTab({
                 />
               </div>
               <div style={{ background: "#f8fafc", padding: "6px 10px", borderRadius: "6px", border: "1px solid #e2e8f0" }}>
-                <span style={{ color: "#64748b", fontSize: "0.75rem", display: "block" }}>Total Blood Vol (TBV)</span>
-                <span style={{ fontSize: "1.05rem", fontWeight: 800, color: "#0f172a" }}>{nadlerResult.tbvLiters} Liters</span>
+                <span style={{ color: "#64748b", fontSize: "0.72rem", display: "block" }}>Total Blood Vol (TBV)</span>
+                <span style={{ fontSize: "1rem", fontWeight: 800, color: "#0f172a" }}>{nadlerResult.tbvLiters} Liters</span>
               </div>
             </div>
           </div>
 
-          <div style={{ background: "#ffffff", border: "1px solid #e2e8f0", borderRadius: "14px", padding: "20px" }}>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px" }}>
-              <h3 style={{ fontSize: "1.05rem", fontWeight: 700, display: "flex", alignItems: "center", gap: "8px" }}>
-                <FlaskConical size={18} color="#dc2626" />
-                Blood Test Cassette & Micro-Agglutination Wells
+          <div style={{ background: "#ffffff", border: "1px solid #e2e8f0", borderRadius: "14px", padding: "18px" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "14px", flexWrap: "wrap", gap: "8px" }}>
+              <h3 style={{ fontSize: "1rem", fontWeight: 700, display: "flex", alignItems: "center", gap: "8px" }}>
+                <FlaskConical size={17} color="#dc2626" />
+                Blood Test Cassette Wells
               </h3>
-              <div style={{ display: "flex", gap: "8px" }}>
+              <div>
                 <input
                   type="file"
                   ref={fileInputRef}
@@ -481,32 +458,33 @@ function AnalyzerTab({
                     border: "1px solid #cbd5e1",
                     padding: "6px 12px",
                     borderRadius: "6px",
-                    fontSize: "0.8rem",
+                    fontSize: "0.78rem",
                     fontWeight: 600,
-                    display: "flex",
+                    display: "inline-flex",
                     alignItems: "center",
                     gap: "6px"
                   }}
                 >
-                  <Upload size={14} /> Upload Custom Slide
+                  <Upload size={13} /> Upload Custom Slide
                 </button>
               </div>
             </div>
 
-            <div style={{ display: "flex", gap: "8px", marginBottom: "16px", overflowX: "auto", paddingBottom: "4px" }}>
+            <div style={{ display: "flex", gap: "8px", marginBottom: "14px", overflowX: "auto", paddingBottom: "4px" }} className="custom-scrollbar">
               {SAMPLE_CASES.map((sc) => (
                 <button
                   key={sc.id}
                   onClick={() => handleSelectCase(sc.id)}
                   style={{
-                    padding: "7px 12px",
+                    padding: "6px 12px",
                     borderRadius: "6px",
-                    fontSize: "0.8rem",
+                    fontSize: "0.78rem",
                     fontWeight: 600,
                     background: selectedCaseId === sc.id ? "#dc2626" : "#f8fafc",
                     color: selectedCaseId === sc.id ? "#ffffff" : "#475569",
                     border: selectedCaseId === sc.id ? "1px solid #dc2626" : "1px solid #e2e8f0",
-                    whiteSpace: "nowrap"
+                    whiteSpace: "nowrap",
+                    flexShrink: 0
                   }}
                 >
                   {sc.expectedGroup} Case
@@ -519,19 +497,19 @@ function AnalyzerTab({
                 background: "#f8fafc",
                 border: "2px dashed #cbd5e1",
                 borderRadius: "12px",
-                padding: "24px 16px",
+                padding: "20px 12px",
                 display: "flex",
                 flexDirection: "column",
                 alignItems: "center",
-                gap: "16px"
+                gap: "14px"
               }}
             >
               {analyzing ? (
-                <div style={{ padding: "40px 0", textAlign: "center", color: "#dc2626", fontWeight: 700 }}>
+                <div style={{ padding: "30px 0", textAlign: "center", color: "#dc2626", fontWeight: 700 }}>
                   Analyzing High-Resolution Slide Texture...
                 </div>
               ) : (
-                <div style={{ display: "flex", gap: "32px", justifyContent: "center", width: "100%" }}>
+                <div className="wells-container">
                   <WellCard
                     name="Well-A (Anti-A)"
                     state={wellAState}
@@ -553,9 +531,9 @@ function AnalyzerTab({
                 </div>
               )}
 
-              <div style={{ width: "100%", maxWidth: "480px", marginTop: "12px" }}>
-                <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.78rem", color: "#64748b", marginBottom: "4px" }}>
-                  <span>Agglutination Texture Threshold (&sigma;): <strong>{sensitivityThreshold.toFixed(1)}</strong></span>
+              <div style={{ width: "100%", maxWidth: "440px", marginTop: "8px" }}>
+                <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.75rem", color: "#64748b", marginBottom: "4px" }}>
+                  <span>Agglutination Threshold (&sigma;): <strong>{sensitivityThreshold.toFixed(1)}</strong></span>
                   <span>Smooth (&lt;35) vs Clumped (&gt;45)</span>
                 </div>
                 <input
@@ -573,68 +551,70 @@ function AnalyzerTab({
         </div>
 
         <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
-          <div style={{ background: "#ffffff", border: "1px solid #e2e8f0", borderRadius: "14px", padding: "20px" }}>
-            <h3 style={{ fontSize: "1.05rem", fontWeight: 700, marginBottom: "14px", display: "flex", alignItems: "center", gap: "8px" }}>
-              <Layers size={18} color="#dc2626" />
+          <div style={{ background: "#ffffff", border: "1px solid #e2e8f0", borderRadius: "14px", padding: "18px" }}>
+            <h3 style={{ fontSize: "1rem", fontWeight: 700, marginBottom: "12px", display: "flex", alignItems: "center", gap: "8px" }}>
+              <Layers size={17} color="#dc2626" />
               Immunohematology Reaction Matrix
             </h3>
 
-            <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "0.85rem" }}>
-              <thead>
-                <tr style={{ background: "#f8fafc", borderBottom: "1px solid #e2e8f0", textAlign: "left" }}>
-                  <th style={{ padding: "8px 10px" }}>Reagent Target</th>
-                  <th style={{ padding: "8px 10px" }}>Observed Texture</th>
-                  <th style={{ padding: "8px 10px" }}>Clumping Status</th>
-                  <th style={{ padding: "8px 10px" }}>Antigen Call</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr style={{ borderBottom: "1px solid #f1f5f9" }}>
-                  <td style={{ padding: "8px 10px", fontWeight: 600 }}>Anti-A Monoclonal</td>
-                  <td style={{ padding: "8px 10px" }}>{wellScores.a.toFixed(1)} &sigma;</td>
-                  <td style={{ padding: "8px 10px" }}>
-                    <span style={{ color: wellAState ? "#16a34a" : "#64748b", fontWeight: 700 }}>
-                      {wellAState ? "CLUMPED" : "SMOOTH"}
-                    </span>
-                  </td>
-                  <td style={{ padding: "8px 10px" }}>{wellAState ? "Positive (A+)" : "Negative (A-)"}</td>
-                </tr>
-                <tr style={{ borderBottom: "1px solid #f1f5f9" }}>
-                  <td style={{ padding: "8px 10px", fontWeight: 600 }}>Anti-B Monoclonal</td>
-                  <td style={{ padding: "8px 10px" }}>{wellScores.b.toFixed(1)} &sigma;</td>
-                  <td style={{ padding: "8px 10px" }}>
-                    <span style={{ color: wellBState ? "#16a34a" : "#64748b", fontWeight: 700 }}>
-                      {wellBState ? "CLUMPED" : "SMOOTH"}
-                    </span>
-                  </td>
-                  <td style={{ padding: "8px 10px" }}>{wellBState ? "Positive (B+)" : "Negative (B-)"}</td>
-                </tr>
-                <tr>
-                  <td style={{ padding: "8px 10px", fontWeight: 600 }}>Anti-D (RhD) Factor</td>
-                  <td style={{ padding: "8px 10px" }}>{wellScores.d.toFixed(1)} &sigma;</td>
-                  <td style={{ padding: "8px 10px" }}>
-                    <span style={{ color: wellDState ? "#16a34a" : "#64748b", fontWeight: 700 }}>
-                      {wellDState ? "CLUMPED" : "SMOOTH"}
-                    </span>
-                  </td>
-                  <td style={{ padding: "8px 10px" }}>{wellDState ? "Rh-Positive (D+)" : "Rh-Negative (D-)"}</td>
-                </tr>
-              </tbody>
-            </table>
+            <div style={{ overflowX: "auto" }} className="custom-scrollbar">
+              <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "0.82rem", minWidth: "300px" }}>
+                <thead>
+                  <tr style={{ background: "#f8fafc", borderBottom: "1px solid #e2e8f0", textAlign: "left" }}>
+                    <th style={{ padding: "8px 10px" }}>Reagent</th>
+                    <th style={{ padding: "8px 10px" }}>Texture</th>
+                    <th style={{ padding: "8px 10px" }}>Clumping</th>
+                    <th style={{ padding: "8px 10px" }}>Call</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr style={{ borderBottom: "1px solid #f1f5f9" }}>
+                    <td style={{ padding: "8px 10px", fontWeight: 600 }}>Anti-A</td>
+                    <td style={{ padding: "8px 10px" }}>{wellScores.a.toFixed(1)} &sigma;</td>
+                    <td style={{ padding: "8px 10px" }}>
+                      <span style={{ color: wellAState ? "#16a34a" : "#64748b", fontWeight: 700 }}>
+                        {wellAState ? "CLUMPED" : "SMOOTH"}
+                      </span>
+                    </td>
+                    <td style={{ padding: "8px 10px" }}>{wellAState ? "POS" : "NEG"}</td>
+                  </tr>
+                  <tr style={{ borderBottom: "1px solid #f1f5f9" }}>
+                    <td style={{ padding: "8px 10px", fontWeight: 600 }}>Anti-B</td>
+                    <td style={{ padding: "8px 10px" }}>{wellScores.b.toFixed(1)} &sigma;</td>
+                    <td style={{ padding: "8px 10px" }}>
+                      <span style={{ color: wellBState ? "#16a34a" : "#64748b", fontWeight: 700 }}>
+                        {wellBState ? "CLUMPED" : "SMOOTH"}
+                      </span>
+                    </td>
+                    <td style={{ padding: "8px 10px" }}>{wellBState ? "POS" : "NEG"}</td>
+                  </tr>
+                  <tr>
+                    <td style={{ padding: "8px 10px", fontWeight: 600 }}>Anti-D (Rh)</td>
+                    <td style={{ padding: "8px 10px" }}>{wellScores.d.toFixed(1)} &sigma;</td>
+                    <td style={{ padding: "8px 10px" }}>
+                      <span style={{ color: wellDState ? "#16a34a" : "#64748b", fontWeight: 700 }}>
+                        {wellDState ? "CLUMPED" : "SMOOTH"}
+                      </span>
+                    </td>
+                    <td style={{ padding: "8px 10px" }}>{wellDState ? "POS (D+)" : "NEG (D-)"}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
           </div>
 
-          <div style={{ background: "#ffffff", border: "1px solid #e2e8f0", borderRadius: "14px", padding: "20px" }}>
-            <h3 style={{ fontSize: "1.05rem", fontWeight: 700, marginBottom: "14px", display: "flex", alignItems: "center", gap: "8px" }}>
-              <Heart size={18} color="#dc2626" />
+          <div style={{ background: "#ffffff", border: "1px solid #e2e8f0", borderRadius: "14px", padding: "18px" }}>
+            <h3 style={{ fontSize: "1rem", fontWeight: 700, marginBottom: "12px", display: "flex", alignItems: "center", gap: "8px" }}>
+              <Heart size={17} color="#dc2626" />
               Immediate Transfusion Compatibility
             </h3>
 
-            <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
-              <div style={{ background: "#f0fdf4", border: "1px solid #bbf7d0", padding: "12px 14px", borderRadius: "8px" }}>
-                <span style={{ fontSize: "0.8rem", fontWeight: 700, color: "#166534", textTransform: "uppercase" }}>
+            <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+              <div style={{ background: "#f0fdf4", border: "1px solid #bbf7d0", padding: "10px 12px", borderRadius: "8px" }}>
+                <span style={{ fontSize: "0.75rem", fontWeight: 700, color: "#166534", textTransform: "uppercase" }}>
                   Safe RBC Donors (Can Receive Blood From):
                 </span>
-                <div style={{ display: "flex", gap: "8px", flexWrap: "wrap", marginTop: "6px" }}>
+                <div style={{ display: "flex", gap: "6px", flexWrap: "wrap", marginTop: "6px" }}>
                   {compatibility.canReceiveRbcFrom.map((g: BloodGroup) => (
                     <span
                       key={g}
@@ -642,9 +622,9 @@ function AnalyzerTab({
                         background: "#16a34a",
                         color: "#fff",
                         fontWeight: 800,
-                        fontSize: "0.82rem",
-                        padding: "3px 10px",
-                        borderRadius: "6px"
+                        fontSize: "0.78rem",
+                        padding: "2px 8px",
+                        borderRadius: "5px"
                       }}
                     >
                       {g}
@@ -653,11 +633,11 @@ function AnalyzerTab({
                 </div>
               </div>
 
-              <div style={{ background: "#eff6ff", border: "1px solid #bfdbfe", padding: "12px 14px", borderRadius: "8px" }}>
-                <span style={{ fontSize: "0.8rem", fontWeight: 700, color: "#1e40af", textTransform: "uppercase" }}>
+              <div style={{ background: "#eff6ff", border: "1px solid #bfdbfe", padding: "10px 12px", borderRadius: "8px" }}>
+                <span style={{ fontSize: "0.75rem", fontWeight: 700, color: "#1e40af", textTransform: "uppercase" }}>
                   Safe Recipients (Can Donate Blood To):
                 </span>
-                <div style={{ display: "flex", gap: "8px", flexWrap: "wrap", marginTop: "6px" }}>
+                <div style={{ display: "flex", gap: "6px", flexWrap: "wrap", marginTop: "6px" }}>
                   {compatibility.canDonateRbcTo.map((g: BloodGroup) => (
                     <span
                       key={g}
@@ -665,9 +645,9 @@ function AnalyzerTab({
                         background: "#2563eb",
                         color: "#fff",
                         fontWeight: 800,
-                        fontSize: "0.82rem",
-                        padding: "3px 10px",
-                        borderRadius: "6px"
+                        fontSize: "0.78rem",
+                        padding: "2px 8px",
+                        borderRadius: "5px"
                       }}
                     >
                       {g}
@@ -676,14 +656,14 @@ function AnalyzerTab({
                 </div>
               </div>
 
-              <div style={{ background: "#f8fafc", border: "1px solid #e2e8f0", padding: "12px 14px", borderRadius: "8px", fontSize: "0.85rem" }}>
-                <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "4px" }}>
-                  <span style={{ color: "#64748b" }}>Safe Voluntary Donation Volume:</span>
+              <div style={{ background: "#f8fafc", border: "1px solid #e2e8f0", padding: "10px 12px", borderRadius: "8px", fontSize: "0.82rem" }}>
+                <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "3px" }}>
+                  <span style={{ color: "#64748b" }}>Safe Donation Volume:</span>
                   <span style={{ fontWeight: 800, color: nadlerResult.isEligible ? "#16a34a" : "#dc2626" }}>
                     {nadlerResult.maxSafeDonationMl > 0 ? `${nadlerResult.maxSafeDonationMl} mL` : "Ineligible"}
                   </span>
                 </div>
-                <p style={{ color: "#475569", fontSize: "0.78rem" }}>{nadlerResult.eligibilityStatus}</p>
+                <p style={{ color: "#475569", fontSize: "0.75rem" }}>{nadlerResult.eligibilityStatus}</p>
               </div>
             </div>
           </div>
@@ -706,17 +686,19 @@ function WellCard({ name, state, setState, score }: any) {
         userSelect: "none"
       }}
     >
-      <span style={{ fontSize: "0.8rem", fontWeight: 700, color: "#475569", marginBottom: "6px" }}>{name}</span>
+      <span style={{ fontSize: "0.76rem", fontWeight: 700, color: "#475569", marginBottom: "6px", textAlign: "center" }}>
+        {name}
+      </span>
       <div
         style={{
-          width: "90px",
-          height: "90px",
+          width: "80px",
+          height: "80px",
           borderRadius: "50%",
           background: isClumped
             ? "radial-gradient(circle at 35% 35%, #991b1b, #450a0a)"
             : "radial-gradient(circle at 35% 35%, #ef4444, #b91c1c)",
-          border: `4px solid ${isClumped ? "#16a34a" : "#cbd5e1"}`,
-          boxShadow: isClumped ? "0 0 16px rgba(22, 163, 74, 0.45)" : "none",
+          border: `3px solid ${isClumped ? "#16a34a" : "#cbd5e1"}`,
+          boxShadow: isClumped ? "0 0 14px rgba(22, 163, 74, 0.45)" : "none",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
@@ -732,8 +714,8 @@ function WellCard({ name, state, setState, score }: any) {
                 key={i}
                 style={{
                   position: "absolute",
-                  width: `${6 + (i % 5)}px`,
-                  height: `${6 + (i % 5)}px`,
+                  width: `${5 + (i % 4)}px`,
+                  height: `${5 + (i % 4)}px`,
                   borderRadius: "50%",
                   background: "#450a0a",
                   top: `${15 + ((i * 22) % 65)}%`,
@@ -748,12 +730,12 @@ function WellCard({ name, state, setState, score }: any) {
         )}
       </div>
 
-      <div style={{ marginTop: "8px", textAlign: "center" }}>
+      <div style={{ marginTop: "6px", textAlign: "center" }}>
         <span
           style={{
-            fontSize: "0.75rem",
+            fontSize: "0.7rem",
             fontWeight: 800,
-            padding: "2px 8px",
+            padding: "2px 6px",
             borderRadius: "4px",
             background: isClumped ? "#dcfce7" : "#f1f5f9",
             color: isClumped ? "#15803d" : "#64748b"
@@ -761,7 +743,7 @@ function WellCard({ name, state, setState, score }: any) {
         >
           {isClumped ? "CLUMPED (POS)" : "SMOOTH (NEG)"}
         </span>
-        <div style={{ fontSize: "0.72rem", color: "#64748b", marginTop: "2px" }}>
+        <div style={{ fontSize: "0.68rem", color: "#64748b", marginTop: "2px" }}>
           &sigma; = {score.toFixed(1)}
         </div>
       </div>
@@ -773,22 +755,22 @@ function TransfusionTab({ diagnosedGroup }: { diagnosedGroup: BloodGroup }) {
   const allGroups: BloodGroup[] = ["O-", "O+", "A-", "A+", "B-", "B+", "AB-", "AB+"];
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
-      <div style={{ background: "#ffffff", border: "1px solid #e2e8f0", borderRadius: "14px", padding: "24px" }}>
-        <h2 style={{ fontSize: "1.3rem", fontWeight: 800, marginBottom: "8px" }}>
+    <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
+      <div style={{ background: "#ffffff", border: "1px solid #e2e8f0", borderRadius: "14px", padding: "20px" }}>
+        <h2 style={{ fontSize: "1.2rem", fontWeight: 800, marginBottom: "6px" }}>
           Automated Clinical Transfusion Compatibility Grid
         </h2>
-        <p style={{ color: "#64748b", fontSize: "0.88rem", marginBottom: "20px" }}>
-          Standard Cross-Matching Reference for Emergency Whole Blood, Packed Red Blood Cells (pRBC), and Fresh Frozen Plasma (FFP).
+        <p style={{ color: "#64748b", fontSize: "0.82rem", marginBottom: "16px" }}>
+          Standard Cross-Matching Reference for Emergency Whole Blood, Packed Red Blood Cells (pRBC), and Plasma.
         </p>
 
-        <div style={{ overflowX: "auto" }}>
-          <table style={{ width: "100%", borderCollapse: "collapse", textAlign: "center", fontSize: "0.85rem" }}>
+        <div style={{ overflowX: "auto" }} className="custom-scrollbar">
+          <table style={{ width: "100%", borderCollapse: "collapse", textAlign: "center", fontSize: "0.82rem", minWidth: "550px" }}>
             <thead>
               <tr style={{ background: "#f8fafc", borderBottom: "2px solid #e2e8f0" }}>
-                <th style={{ padding: "12px", textAlign: "left" }}>Recipient Patient &darr; / Donor &rarr;</th>
+                <th style={{ padding: "10px", textAlign: "left" }}>Recipient &darr; / Donor &rarr;</th>
                 {allGroups.map((g) => (
-                  <th key={g} style={{ padding: "12px", fontWeight: 800, color: "#0f172a" }}>
+                  <th key={g} style={{ padding: "10px", fontWeight: 800, color: "#0f172a" }}>
                     {g}
                   </th>
                 ))}
@@ -806,22 +788,22 @@ function TransfusionTab({ diagnosedGroup }: { diagnosedGroup: BloodGroup }) {
                       background: isSelected ? "#fef2f2" : "transparent"
                     }}
                   >
-                    <td style={{ padding: "12px", textAlign: "left", fontWeight: 800, color: isSelected ? "#dc2626" : "#0f172a" }}>
-                      {recip} {isSelected && <span style={{ fontSize: "0.75rem", color: "#dc2626" }}>(Active Patient)</span>}
+                    <td style={{ padding: "10px", textAlign: "left", fontWeight: 800, color: isSelected ? "#dc2626" : "#0f172a" }}>
+                      {recip} {isSelected && <span style={{ fontSize: "0.7rem", color: "#dc2626" }}>(Active)</span>}
                     </td>
                     {allGroups.map((don) => {
                       const isCompatible = recipCompat.canReceiveRbcFrom.includes(don);
                       return (
-                        <td key={don} style={{ padding: "12px" }}>
+                        <td key={don} style={{ padding: "10px" }}>
                           {isCompatible ? (
                             <span
                               style={{
                                 background: "#dcfce7",
                                 color: "#15803d",
                                 fontWeight: 800,
-                                padding: "4px 8px",
-                                borderRadius: "6px",
-                                fontSize: "0.78rem"
+                                padding: "3px 6px",
+                                borderRadius: "5px",
+                                fontSize: "0.72rem"
                               }}
                             >
                               SAFE
@@ -832,9 +814,9 @@ function TransfusionTab({ diagnosedGroup }: { diagnosedGroup: BloodGroup }) {
                                 background: "#fee2e2",
                                 color: "#b91c1c",
                                 fontWeight: 800,
-                                padding: "4px 8px",
-                                borderRadius: "6px",
-                                fontSize: "0.78rem"
+                                padding: "3px 6px",
+                                borderRadius: "5px",
+                                fontSize: "0.72rem"
                               }}
                             >
                               CLASH
@@ -865,45 +847,45 @@ function BenchmarksTab() {
   ];
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
-      <div style={{ background: "#ffffff", border: "1px solid #e2e8f0", borderRadius: "14px", padding: "24px" }}>
-        <h2 style={{ fontSize: "1.3rem", fontWeight: 800, marginBottom: "6px" }}>
+    <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
+      <div style={{ background: "#ffffff", border: "1px solid #e2e8f0", borderRadius: "14px", padding: "20px" }}>
+        <h2 style={{ fontSize: "1.2rem", fontWeight: 800, marginBottom: "6px" }}>
           Multi-Model Performance & Clinical Validation Suite
         </h2>
-        <p style={{ color: "#64748b", fontSize: "0.88rem", marginBottom: "20px" }}>
+        <p style={{ color: "#64748b", fontSize: "0.82rem", marginBottom: "16px" }}>
           Rigorous Cross-Validation and Generalization Audit on 5,000 multi-patient test cohorts with 0.00 Fatal Transfusion Errors.
         </p>
 
-        <div style={{ overflowX: "auto" }}>
-          <table style={{ width: "100%", borderCollapse: "collapse", textAlign: "left", fontSize: "0.85rem" }}>
+        <div style={{ overflowX: "auto" }} className="custom-scrollbar">
+          <table style={{ width: "100%", borderCollapse: "collapse", textAlign: "left", fontSize: "0.82rem", minWidth: "550px" }}>
             <thead>
               <tr style={{ background: "#f8fafc", borderBottom: "2px solid #e2e8f0" }}>
-                <th style={{ padding: "10px 12px" }}>Architecture</th>
-                <th style={{ padding: "10px 12px" }}>Train Accuracy</th>
-                <th style={{ padding: "10px 12px" }}>Test Accuracy</th>
-                <th style={{ padding: "10px 12px" }}>Generalization Gap</th>
-                <th style={{ padding: "10px 12px" }}>Fatal Hemolytic Errors</th>
-                <th style={{ padding: "10px 12px" }}>Quality Verdict</th>
+                <th style={{ padding: "8px 10px" }}>Architecture</th>
+                <th style={{ padding: "8px 10px" }}>Train Acc</th>
+                <th style={{ padding: "8px 10px" }}>Test Acc</th>
+                <th style={{ padding: "8px 10px" }}>Gap</th>
+                <th style={{ padding: "8px 10px" }}>Fatal Errors</th>
+                <th style={{ padding: "8px 10px" }}>Status</th>
               </tr>
             </thead>
             <tbody>
               {models.map((m, idx) => (
                 <tr key={idx} style={{ borderBottom: "1px solid #f1f5f9" }}>
-                  <td style={{ padding: "10px 12px", fontWeight: 700 }}>{m.name}</td>
-                  <td style={{ padding: "10px 12px" }}>{m.trainAcc}</td>
-                  <td style={{ padding: "10px 12px", fontWeight: 800, color: "#16a34a" }}>{m.testAcc}</td>
-                  <td style={{ padding: "10px 12px" }}>{m.gap}</td>
-                  <td style={{ padding: "10px 12px", fontWeight: 700, color: m.fatal === 0 ? "#16a34a" : "#dc2626" }}>
+                  <td style={{ padding: "8px 10px", fontWeight: 700 }}>{m.name}</td>
+                  <td style={{ padding: "8px 10px" }}>{m.trainAcc}</td>
+                  <td style={{ padding: "8px 10px", fontWeight: 800, color: "#16a34a" }}>{m.testAcc}</td>
+                  <td style={{ padding: "8px 10px" }}>{m.gap}</td>
+                  <td style={{ padding: "8px 10px", fontWeight: 700, color: m.fatal === 0 ? "#16a34a" : "#dc2626" }}>
                     {m.fatal}
                   </td>
-                  <td style={{ padding: "10px 12px" }}>
+                  <td style={{ padding: "8px 10px" }}>
                     <span
                       style={{
                         background: m.fatal === 0 ? "#dcfce7" : "#fee2e2",
                         color: m.fatal === 0 ? "#15803d" : "#b91c1c",
-                        padding: "3px 8px",
+                        padding: "2px 6px",
                         borderRadius: "4px",
-                        fontSize: "0.78rem",
+                        fontSize: "0.72rem",
                         fontWeight: 700
                       }}
                     >
@@ -922,16 +904,16 @@ function BenchmarksTab() {
 
 function HowToUseTab() {
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: "24px", maxWidth: "900px", margin: "0 auto" }}>
-      <div style={{ background: "#ffffff", border: "1px solid #e2e8f0", borderRadius: "14px", padding: "28px" }}>
-        <h2 style={{ fontSize: "1.4rem", fontWeight: 800, marginBottom: "8px", color: "#991b1b" }}>
-          📖 How to Use Arogya-Edge Clinical CDSS
+    <div style={{ display: "flex", flexDirection: "column", gap: "20px", maxWidth: "900px", margin: "0 auto" }}>
+      <div style={{ background: "#ffffff", border: "1px solid #e2e8f0", borderRadius: "14px", padding: "22px" }}>
+        <h2 style={{ fontSize: "1.3rem", fontWeight: 800, marginBottom: "6px", color: "#991b1b" }}>
+          📖 Operating Guide & Protocol
         </h2>
-        <p style={{ color: "#64748b", fontSize: "0.9rem", marginBottom: "24px" }}>
-          Quick step-by-step operating manual for clinical laboratory personnel, paramedics, and diagnostic centers.
+        <p style={{ color: "#64748b", fontSize: "0.85rem", marginBottom: "20px" }}>
+          Standard operating manual for clinical laboratories, paramedics, and diagnostic centers.
         </p>
 
-        <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
+        <div style={{ display: "flex", flexDirection: "column", gap: "18px" }}>
           <StepItem
             step="1"
             title="Prepare Patient Sample & Reagent Reaction"
@@ -960,15 +942,16 @@ function HowToUseTab() {
 
 function StepItem({ step, title, desc }: { step: string; title: string; desc: string }) {
   return (
-    <div style={{ display: "flex", gap: "16px", alignItems: "flex-start" }}>
+    <div style={{ display: "flex", gap: "14px", alignItems: "flex-start" }}>
       <div
         style={{
-          width: "36px",
-          height: "36px",
+          width: "32px",
+          height: "32px",
           borderRadius: "50%",
           background: "#dc2626",
           color: "#ffffff",
           fontWeight: 800,
+          fontSize: "0.85rem",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
@@ -978,8 +961,8 @@ function StepItem({ step, title, desc }: { step: string; title: string; desc: st
         {step}
       </div>
       <div>
-        <h4 style={{ fontSize: "1.02rem", fontWeight: 700, color: "#0f172a", marginBottom: "4px" }}>{title}</h4>
-        <p style={{ color: "#475569", fontSize: "0.86rem", lineHeight: 1.6 }}>{desc}</p>
+        <h4 style={{ fontSize: "0.95rem", fontWeight: 700, color: "#0f172a", marginBottom: "3px" }}>{title}</h4>
+        <p style={{ color: "#475569", fontSize: "0.82rem", lineHeight: 1.5 }}>{desc}</p>
       </div>
     </div>
   );
