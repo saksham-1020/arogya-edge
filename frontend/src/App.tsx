@@ -13,10 +13,7 @@ import {
   Printer,
   FileCheck2,
   X,
-  AlertCircle,
-  ChevronDown,
-  ChevronUp,
-  Sparkles
+  AlertCircle
 } from "lucide-react";
 import confetti from "canvas-confetti";
 import type { BloodGroup, PatientProfile } from "./types";
@@ -41,7 +38,6 @@ export default function App() {
 
   const [nameError, setNameError] = useState<string>("");
   const [showReportModal, setShowReportModal] = useState<boolean>(false);
-  const [showExplanationCard, setShowExplanationCard] = useState<boolean>(true);
 
   const [selectedCaseId, setSelectedCaseId] = useState<string>("CASE-01");
   const [uploadedImage, setUploadedImage] = useState<string | null>(null);
@@ -271,8 +267,6 @@ export default function App() {
             setPatient={setPatient}
             nameError={nameError}
             handleOpenReport={handleOpenReport}
-            showExplanationCard={showExplanationCard}
-            setShowExplanationCard={setShowExplanationCard}
             selectedCaseId={selectedCaseId}
             handleSelectCase={handleSelectCase}
             uploadedImage={uploadedImage}
@@ -349,8 +343,6 @@ function AnalyzerTab({
   setPatient,
   nameError,
   handleOpenReport,
-  showExplanationCard,
-  setShowExplanationCard,
   selectedCaseId,
   handleSelectCase,
   uploadedImage,
@@ -371,8 +363,6 @@ function AnalyzerTab({
   nadlerResult,
   setActiveTab
 }: any) {
-  const bio = compatibility.biologicalExplanation;
-
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
       <div className="analyzer-banner">
@@ -459,108 +449,6 @@ function AnalyzerTab({
             Transfusion Matching
           </button>
         </div>
-      </div>
-
-      <div
-        style={{
-          background: "linear-gradient(135deg, #ffffff 0%, #f8fafc 100%)",
-          border: "1.5px solid #e2e8f0",
-          borderRadius: "14px",
-          overflow: "hidden",
-          boxShadow: "0 2px 8px rgba(0,0,0,0.03)"
-        }}
-      >
-        <div
-          onClick={() => setShowExplanationCard(!showExplanationCard)}
-          style={{
-            padding: "14px 20px",
-            background: "#f1f5f9",
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            cursor: "pointer",
-            userSelect: "none"
-          }}
-        >
-          <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-            <Sparkles size={18} color="#991b1b" />
-            <h3 style={{ fontSize: "0.95rem", fontWeight: 800, color: "#0f172a" }}>
-              💡 Pehchaan Aur Scientific Reason: Yeh Blood Group "{diagnosedGroup}" Kyu Aaya?
-            </h3>
-          </div>
-          <div style={{ display: "flex", alignItems: "center", gap: "6px", color: "#64748b", fontSize: "0.8rem", fontWeight: 600 }}>
-            <span>{showExplanationCard ? "Collapse" : "Expand Details"}</span>
-            {showExplanationCard ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
-          </div>
-        </div>
-
-        {showExplanationCard && (
-          <div style={{ padding: "20px", display: "flex", flexDirection: "column", gap: "16px" }}>
-            <div style={{ background: "#fef2f2", borderLeft: "4px solid #dc2626", padding: "12px 16px", borderRadius: "0 8px 8px 0" }}>
-              <div style={{ fontWeight: 800, color: "#991b1b", fontSize: "0.88rem", marginBottom: "4px" }}>
-                🎯 Seedha Niyam (Clinical Identification Rule):
-              </div>
-              <p style={{ color: "#450a0a", fontSize: "0.84rem", fontWeight: 600 }}>
-                {bio.identificationRule}
-              </p>
-              <p style={{ color: "#7f1d1d", fontSize: "0.82rem", marginTop: "4px" }}>
-                {bio.whyThisGroup}
-              </p>
-            </div>
-
-            <div>
-              <h4 style={{ fontSize: "0.85rem", fontWeight: 800, color: "#334155", textTransform: "uppercase", marginBottom: "10px", display: "flex", alignItems: "center", gap: "6px" }}>
-                <FlaskConical size={14} color="#dc2626" /> Har Drop (Well) Ka Scientific Logic:
-              </h4>
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "12px" }}>
-                <div style={{ background: "#ffffff", border: wellAState ? "1.5px solid #bbf7d0" : "1px solid #e2e8f0", padding: "12px", borderRadius: "10px" }}>
-                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "6px" }}>
-                    <span style={{ fontWeight: 800, fontSize: "0.82rem", color: "#0f172a" }}>Well-A (Anti-A)</span>
-                    <span style={{ fontSize: "0.7rem", fontWeight: 800, padding: "2px 6px", borderRadius: "4px", background: wellAState ? "#dcfce7" : "#f1f5f9", color: wellAState ? "#15803d" : "#64748b" }}>
-                      {wellAState ? "CLUMPED" : "SMOOTH"}
-                    </span>
-                  </div>
-                  <p style={{ fontSize: "0.78rem", color: "#475569", lineHeight: 1.45 }}>{bio.reagentClumpingBreakdown.wellA}</p>
-                </div>
-
-                <div style={{ background: "#ffffff", border: wellBState ? "1.5px solid #bbf7d0" : "1px solid #e2e8f0", padding: "12px", borderRadius: "10px" }}>
-                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "6px" }}>
-                    <span style={{ fontWeight: 800, fontSize: "0.82rem", color: "#0f172a" }}>Well-B (Anti-B)</span>
-                    <span style={{ fontSize: "0.7rem", fontWeight: 800, padding: "2px 6px", borderRadius: "4px", background: wellBState ? "#dcfce7" : "#f1f5f9", color: wellBState ? "#15803d" : "#64748b" }}>
-                      {wellBState ? "CLUMPED" : "SMOOTH"}
-                    </span>
-                  </div>
-                  <p style={{ fontSize: "0.78rem", color: "#475569", lineHeight: 1.45 }}>{bio.reagentClumpingBreakdown.wellB}</p>
-                </div>
-
-                <div style={{ background: "#ffffff", border: wellDState ? "1.5px solid #bbf7d0" : "1px solid #e2e8f0", padding: "12px", borderRadius: "10px" }}>
-                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "6px" }}>
-                    <span style={{ fontWeight: 800, fontSize: "0.82rem", color: "#0f172a" }}>Well-D (Anti-D / Rh)</span>
-                    <span style={{ fontSize: "0.7rem", fontWeight: 800, padding: "2px 6px", borderRadius: "4px", background: wellDState ? "#dcfce7" : "#f1f5f9", color: wellDState ? "#15803d" : "#64748b" }}>
-                      {wellDState ? "CLUMPED (+)" : "SMOOTH (-)"}
-                    </span>
-                  </div>
-                  <p style={{ fontSize: "0.78rem", color: "#475569", lineHeight: 1.45 }}>{bio.reagentClumpingBreakdown.wellD}</p>
-                </div>
-              </div>
-            </div>
-
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px", background: "#f8fafc", padding: "12px 16px", borderRadius: "8px", border: "1px solid #e2e8f0", fontSize: "0.82rem" }}>
-              <div>
-                <span style={{ color: "#64748b", display: "block", fontSize: "0.72rem", fontWeight: 700, textTransform: "uppercase" }}>
-                  RBC Ke Surface Par Present Antigens:
-                </span>
-                <strong style={{ color: "#0f172a" }}>{bio.antigensPresent}</strong>
-              </div>
-              <div>
-                <span style={{ color: "#64748b", display: "block", fontSize: "0.72rem", fontWeight: 700, textTransform: "uppercase" }}>
-                  Blood Plasma Me Natural Antibodies:
-                </span>
-                <strong style={{ color: "#0f172a" }}>{bio.antibodiesInPlasma}</strong>
-              </div>
-            </div>
-          </div>
-        )}
       </div>
 
       <div className="analyzer-grid">
@@ -1214,8 +1102,6 @@ function ClinicalReportModal({
     minute: "2-digit"
   });
 
-  const bio = compatibility.biologicalExplanation;
-
   return (
     <div
       style={{
@@ -1342,18 +1228,6 @@ function ClinicalReportModal({
             <div style={{ width: "70px", height: "70px", borderRadius: "50%", background: "#16a34a", color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "2rem", fontWeight: 900 }}>
               {diagnosedGroup}
             </div>
-          </div>
-
-          <div style={{ background: "#f8fafc", border: "1px solid #e2e8f0", borderRadius: "8px", padding: "14px", marginBottom: "20px" }}>
-            <span style={{ fontSize: "0.78rem", fontWeight: 800, color: "#0f172a", textTransform: "uppercase" }}>
-              Diagnostic Scientific Basis (Kyu Aaya Yeh Group):
-            </span>
-            <p style={{ fontSize: "0.82rem", color: "#334155", marginTop: "4px", lineHeight: 1.5 }}>
-              {bio.whyThisGroup}
-            </p>
-            <p style={{ fontSize: "0.8rem", color: "#991b1b", fontWeight: 700, marginTop: "4px" }}>
-              • {bio.identificationRule}
-            </p>
           </div>
 
           <div style={{ marginBottom: "20px" }}>
