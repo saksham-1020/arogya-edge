@@ -1,0 +1,31 @@
+# Node / Frontend Build
+node_modules/
+dist/
+build/
+.next/
+out/
+.vercel/
+
+# Python / Virtual Environment
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+.venv/
+.mplconfig/
+
+# Large Datasets & Archives (Roboflow 5,675 images shouldn't bloat GitHub)
+dataset/big_data_blood_slides/
+dataset/real_clinical_slides/
+*.zip
+*.pt
+*.onnx
+
+# OS & Editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

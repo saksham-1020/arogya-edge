@@ -1,0 +1,57 @@
+[
+    {
+        "Model": "T-CECO (Proposed)",
+        "Accuracy (%)": 98.9,
+        "Precision (%)": 98.91,
+        "Recall (%)": 98.94,
+        "F1-Score (%)": 98.88,
+        "Transfusion Risk (Loss)": 0.0055,
+        "Latency (ms)": 0.059,
+        "Conformal Coverage 99% (%)": 99.2,
+        "Singleton Efficiency (%)": 99.5
+    },
+    {
+        "Model": "MobileNet-1D",
+        "Accuracy (%)": 86.7,
+        "Precision (%)": 93.17,
+        "Recall (%)": 86.89,
+        "F1-Score (%)": 83.28,
+        "Transfusion Risk (Loss)": 0.6425,
+        "Latency (ms)": 0.023,
+        "Conformal Coverage 99% (%)": 98.4,
+        "Singleton Efficiency (%)": 87.4
+    },
+    {
+        "Model": "Random Forest",
+        "Accuracy (%)": 100.0,
+        "Precision (%)": 100.0,
+        "Recall (%)": 100.0,
+        "F1-Score (%)": 100.0,
+        "Transfusion Risk (Loss)": 0.0,
+        "Latency (ms)": 0.062,
+        "Conformal Coverage 99% (%)": 100.0,
+        "Singleton Efficiency (%)": 100.0
+    },
+    {
+        "Model": "Gradient Boosting",
+        "Accuracy (%)": 99.2,
+        "Precision (%)": 99.19,
+        "Recall (%)": 99.18,
+        "F1-Score (%)": 99.18,
+        "Transfusion Risk (Loss)": 0.0275,
+        "Latency (ms)": 0.108,
+        "Conformal Coverage 99% (%)": 99.2,
+        "Singleton Efficiency (%)": 100.0
+    },
+    {
+        "Model": "Support Vector Machine",
+        "Accuracy (%)": 100.0,
+        "Precision (%)": 100.0,
+        "Recall (%)": 100.0,
+        "F1-Score (%)": 100.0,
+        "Transfusion Risk (Loss)": 0.0,
+        "Latency (ms)": 0.053,
+        "Conformal Coverage 99% (%)": 100.0,
+        "Singleton Efficiency (%)": 100.0
+    }
+]

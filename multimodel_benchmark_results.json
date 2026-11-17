@@ -1,0 +1,51 @@
+{
+    "models": {
+        "T-CECO Deep ConvNet": {
+            "train_acc": 99.76666666666667,
+            "test_acc": 99.0,
+            "f1": 98.9602384652742,
+            "fatal_errors": 0,
+            "training_time_sec": 24.92689609527588
+        },
+        "Deep MLP": {
+            "train_acc": 100.0,
+            "test_acc": 100.0,
+            "f1": 100.0,
+            "fatal_errors": 0,
+            "training_time_sec": 2.3840394020080566
+        },
+        "Random Forest": {
+            "train_acc": 100.0,
+            "test_acc": 99.7,
+            "f1": 99.69314139710426,
+            "fatal_errors": 0,
+            "training_time_sec": 0.3338310718536377
+        },
+        "HistGradientBoosting": {
+            "train_acc": 100.0,
+            "test_acc": 99.9,
+            "f1": 99.89980602446336,
+            "fatal_errors": 0,
+            "training_time_sec": 1.4090986251831055
+        },
+        "RBF-Kernel SVM": {
+            "train_acc": 91.10000000000001,
+            "test_acc": 89.2,
+            "f1": 89.66585182102986,
+            "fatal_errors": 2,
+            "training_time_sec": 1.3640601634979248
+        },
+        "K-Nearest Neighbors": {
+            "train_acc": 100.0,
+            "test_acc": 90.7,
+            "f1": 90.91203194111817,
+            "fatal_errors": 6,
+            "training_time_sec": 0.0006663799285888672
+        }
+    },
+    "cross_validation": {
+        "Random_Forest_CV_Mean": 99.94,
+        "HistGradientBoosting_CV_Mean": 99.61999999999999,
+        "SVM_CV_Mean": 90.64000000000001
+    }
+}

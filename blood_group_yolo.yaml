@@ -1,0 +1,7 @@
+path: C:/Users/Saksham Tomar/.gemini/antigravity/scratch/tceco-arogya-edge/dataset/big_data_blood_slides
+train: images/train
+val: images/valid
+test: images/test
+
+nc: 6
+names: ['Well_A_Clumped', 'Well_A_Smooth', 'Well_B_Clumped', 'Well_B_Smooth', 'Well_D_Clumped', 'Well_D_Smooth']
