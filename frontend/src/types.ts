@@ -17,6 +17,18 @@ export interface CompatibilityData {
   plasmaCanDonateTo: BloodGroup[];
   rarityInPopulation: string;
   emergencyUniversalStatus: string;
+  biologicalExplanation: {
+    summary: string;
+    whyThisGroup: string;
+    antigensPresent: string;
+    antibodiesInPlasma: string;
+    reagentClumpingBreakdown: {
+      wellA: string;
+      wellB: string;
+      wellD: string;
+    };
+    identificationRule: string;
+  };
 }
 
 export const BLOOD_COMPATIBILITY: Record<BloodGroup, CompatibilityData> = {
@@ -27,7 +39,19 @@ export const BLOOD_COMPATIBILITY: Record<BloodGroup, CompatibilityData> = {
     plasmaCanReceiveFrom: ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"],
     plasmaCanDonateTo: ["O-"],
     rarityInPopulation: "~7% Global (Critical Emergency Reserve)",
-    emergencyUniversalStatus: "🚨 Standard Emergency Trauma Choice (Safe for all recipients prior to cross-matching)"
+    emergencyUniversalStatus: "🚨 Standard Emergency Trauma Choice (Safe for all recipients prior to cross-matching)",
+    biologicalExplanation: {
+      summary: "Teeno drops smooth (unclumped) rahe, koi clumping nahi hui.",
+      whyThisGroup: "Khoon ke RBCs par na toh A antigen hai, na B antigen, aur na hi Rh(D) protein hai. Isliye kisi bhi reagent ne reaction nahi diya.",
+      antigensPresent: "None (Zero ABO & Rh Antigens on RBC surface)",
+      antibodiesInPlasma: "Anti-A, Anti-B, and potential Anti-D antibodies",
+      reagentClumpingBreakdown: {
+        wellA: "Smooth / No Reaction (Anti-A antibodies ko bind karne ke liye A antigen nahi mila)",
+        wellB: "Smooth / No Reaction (Anti-B antibodies ko bind karne ke liye B antigen nahi mila)",
+        wellD: "Smooth / No Reaction (Rh factor absent hai, isliye blood Rh-Negative hai)"
+      },
+      identificationRule: "Well-A (-), Well-B (-), Well-D (-) = Complete Absence of Antigens &rarr; Group O-Negative"
+    }
   },
   "O+": {
     clinicalBadge: "Universal Positive RBC Donor",
@@ -36,7 +60,19 @@ export const BLOOD_COMPATIBILITY: Record<BloodGroup, CompatibilityData> = {
     plasmaCanReceiveFrom: ["O+", "O-", "A+", "A-", "B+", "B-", "AB+", "AB-"],
     plasmaCanDonateTo: ["O+", "A+", "B+", "AB+"],
     rarityInPopulation: "~38% (Most Common Worldwide)",
-    emergencyUniversalStatus: "Most widely transfused red cell unit in clinical hospital networks"
+    emergencyUniversalStatus: "Most widely transfused red cell unit in clinical hospital networks",
+    biologicalExplanation: {
+      summary: "Sirf Well-D (Rh) clump hua, Well-A aur Well-B smooth rahe.",
+      whyThisGroup: "RBCs par A aur B antigens nahi hain (isliye group 'O'), par Rh-D protein maujood hai (isliye Positive '+').",
+      antigensPresent: "Rh(D) Antigen only (No A or B antigens)",
+      antibodiesInPlasma: "Anti-A and Anti-B antibodies",
+      reagentClumpingBreakdown: {
+        wellA: "Smooth / No Clumping (A antigen absent hai)",
+        wellB: "Smooth / No Clumping (B antigen absent hai)",
+        wellD: "Clumped / Granular Clumping (Anti-D ne RBC par maujood Rh protein ko bind kiya)"
+      },
+      identificationRule: "Well-A (-), Well-B (-), Well-D (+) = Group O-Positive"
+    }
   },
   "A-": {
     clinicalBadge: "Rh-Negative A Donor",
@@ -45,7 +81,19 @@ export const BLOOD_COMPATIBILITY: Record<BloodGroup, CompatibilityData> = {
     plasmaCanReceiveFrom: ["A-", "A+", "AB-", "AB+"],
     plasmaCanDonateTo: ["A-", "O-"],
     rarityInPopulation: "~6% Population",
-    emergencyUniversalStatus: "High demand for negative-group trauma cases"
+    emergencyUniversalStatus: "High demand for negative-group trauma cases",
+    biologicalExplanation: {
+      summary: "Sirf Well-A clump hua; Well-B aur Well-D smooth rahe.",
+      whyThisGroup: "RBCs par 'A' antigen maujood hai, par B antigen aur Rh factor dono absent hain.",
+      antigensPresent: "Antigen A only (Rh-D Absent)",
+      antibodiesInPlasma: "Anti-B antibodies (Plasma me)",
+      reagentClumpingBreakdown: {
+        wellA: "Clumped / Granular Clumping (Anti-A reagent ne A antigen ke sath agglutinate kiya)",
+        wellB: "Smooth / No Reaction (B antigen absent hai)",
+        wellD: "Smooth / No Reaction (Rh factor absent hone ki wajah se blood Negative hai)"
+      },
+      identificationRule: "Well-A (+), Well-B (-), Well-D (-) = Group A-Negative"
+    }
   },
   "A+": {
     clinicalBadge: "Standard A-Positive Profile",
@@ -54,7 +102,19 @@ export const BLOOD_COMPATIBILITY: Record<BloodGroup, CompatibilityData> = {
     plasmaCanReceiveFrom: ["A+", "AB+"],
     plasmaCanDonateTo: ["A+", "A-", "O+", "O-"],
     rarityInPopulation: "~34% Population",
-    emergencyUniversalStatus: "Second most common recipient cohort in emergency triage"
+    emergencyUniversalStatus: "Second most common recipient cohort in emergency triage",
+    biologicalExplanation: {
+      summary: "Well-A aur Well-D dono clump hue; Well-B smooth raha.",
+      whyThisGroup: "RBCs par Antigen A aur Rh-D protein dono present hain, jabki B antigen bilkul absent hai.",
+      antigensPresent: "Antigen A and Rh(D) Antigen",
+      antibodiesInPlasma: "Anti-B antibodies",
+      reagentClumpingBreakdown: {
+        wellA: "Clumped / Agglutinated (Anti-A antibodies ne A-antigens ko jodh kar khoon ke dane banaye)",
+        wellB: "Smooth / No Reaction (Anti-B antibodies ko koi target antigen nahi mila)",
+        wellD: "Clumped / Agglutinated (Anti-D antibodies ne Rh factor ko pehchaan kar clump kiya)"
+      },
+      identificationRule: "Well-A (+), Well-B (-), Well-D (+) = Group A-Positive"
+    }
   },
   "B-": {
     clinicalBadge: "Rh-Negative B Donor",
@@ -63,7 +123,19 @@ export const BLOOD_COMPATIBILITY: Record<BloodGroup, CompatibilityData> = {
     plasmaCanReceiveFrom: ["B-", "B+", "AB-", "AB+"],
     plasmaCanDonateTo: ["B-", "O-"],
     rarityInPopulation: "~2% Population (Very Rare in Western Countries, 15% in South Asia)",
-    emergencyUniversalStatus: "Priority matching required to prevent RhD isoimmunization"
+    emergencyUniversalStatus: "Priority matching required to prevent RhD isoimmunization",
+    biologicalExplanation: {
+      summary: "Sirf Well-B clump hua; Well-A aur Well-D smooth rahe.",
+      whyThisGroup: "RBCs par sirf 'B' antigen maujood hai; A antigen aur Rh protein dono absent hain.",
+      antigensPresent: "Antigen B only (Rh-D Absent)",
+      antibodiesInPlasma: "Anti-A antibodies",
+      reagentClumpingBreakdown: {
+        wellA: "Smooth / No Clumping (A antigen absent hai)",
+        wellB: "Clumped / Strong Reaction (Anti-B ne B-antigens ko precipitate kiya)",
+        wellD: "Smooth / No Clumping (Rh factor absent hone se blood Negative hai)"
+      },
+      identificationRule: "Well-A (-), Well-B (+), Well-D (-) = Group B-Negative"
+    }
   },
   "B+": {
     clinicalBadge: "Standard B-Positive Profile",
@@ -72,7 +144,19 @@ export const BLOOD_COMPATIBILITY: Record<BloodGroup, CompatibilityData> = {
     plasmaCanReceiveFrom: ["B+", "AB+"],
     plasmaCanDonateTo: ["B+", "B-", "O+", "O-"],
     rarityInPopulation: "~9% Globally (High Prevalence in Asia)",
-    emergencyUniversalStatus: "Key focus for voluntary whole blood and platelet apheresis"
+    emergencyUniversalStatus: "Key focus for voluntary whole blood and platelet apheresis",
+    biologicalExplanation: {
+      summary: "Well-B aur Well-D dono clump hue; Well-A smooth raha.",
+      whyThisGroup: "RBCs par Antigen B aur Rh-D dono maujood hain, jabki Antigen A absent hai.",
+      antigensPresent: "Antigen B and Rh(D) Antigen",
+      antibodiesInPlasma: "Anti-A antibodies",
+      reagentClumpingBreakdown: {
+        wellA: "Smooth / No Reaction (Anti-A ko koi antigen nahi mila)",
+        wellB: "Clumped / Agglutinated (Anti-B ne B antigen ke sath clumping banayi)",
+        wellD: "Clumped / Agglutinated (Anti-D ne Rh factor ke sath clumping banayi)"
+      },
+      identificationRule: "Well-A (-), Well-B (+), Well-D (+) = Group B-Positive"
+    }
   },
   "AB-": {
     clinicalBadge: "Universal Plasma Candidate / Rare RBC Recipient",
@@ -81,7 +165,19 @@ export const BLOOD_COMPATIBILITY: Record<BloodGroup, CompatibilityData> = {
     plasmaCanReceiveFrom: ["AB-"],
     plasmaCanDonateTo: ["AB-", "A-", "B-", "O-"],
     rarityInPopulation: "< 1% Population (Rarest Blood Phenotype)",
-    emergencyUniversalStatus: "Highly preserved in blood banks; rare cell donor match"
+    emergencyUniversalStatus: "Highly preserved in blood banks; rare cell donor match",
+    biologicalExplanation: {
+      summary: "Well-A aur Well-B dono clump hue; Well-D smooth raha.",
+      whyThisGroup: "RBCs par A aur B dono antigens co-dominant roop se present hain, par Rh factor absent hai.",
+      antigensPresent: "Both Antigen A & Antigen B (Rh-D Absent)",
+      antibodiesInPlasma: "Neither Anti-A nor Anti-B antibodies",
+      reagentClumpingBreakdown: {
+        wellA: "Clumped / Agglutinated (A antigen ne Anti-A ke sath react kiya)",
+        wellB: "Clumped / Agglutinated (B antigen ne Anti-B ke sath react kiya)",
+        wellD: "Smooth / No Reaction (Rh factor absent hai, isliye Rh-Negative)"
+      },
+      identificationRule: "Well-A (+), Well-B (+), Well-D (-) = Group AB-Negative"
+    }
   },
   "AB+": {
     clinicalBadge: "Universal Red Blood Cell (RBC) Recipient",
@@ -90,7 +186,19 @@ export const BLOOD_COMPATIBILITY: Record<BloodGroup, CompatibilityData> = {
     plasmaCanReceiveFrom: ["AB+"],
     plasmaCanDonateTo: ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"],
     rarityInPopulation: "~3% - 4% Population",
-    emergencyUniversalStatus: "Universal recipient for red blood cells; Universal donor for plasma"
+    emergencyUniversalStatus: "Universal recipient for red blood cells; Universal donor for plasma",
+    biologicalExplanation: {
+      summary: "Teeno drops (Well-A, Well-B, Well-D) clump hue.",
+      whyThisGroup: "RBCs par A, B aur Rh(D) teeno proteins fully express ho rahe hain. Isliye har reagent ne react karke blood ko clump kiya.",
+      antigensPresent: "Antigen A, Antigen B, and Rh(D) Antigen (All Present)",
+      antibodiesInPlasma: "None (Neither Anti-A nor Anti-B antibodies in plasma)",
+      reagentClumpingBreakdown: {
+        wellA: "Clumped / Agglutinated (A antigen confirmed)",
+        wellB: "Clumped / Agglutinated (B antigen confirmed)",
+        wellD: "Clumped / Agglutinated (Rh-D protein confirmed)"
+      },
+      identificationRule: "Well-A (+), Well-B (+), Well-D (+) = Group AB-Positive (Universal RBC Recipient)"
+    }
   }
 };
 
